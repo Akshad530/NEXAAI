@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "aiapp",
+    "slug": "aiapp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "aiapp-scheme",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "elevation": 0
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+  }
+}
