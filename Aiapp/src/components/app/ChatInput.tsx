@@ -16,7 +16,7 @@ interface ChatInputProps {
   disabled?: boolean;
 }
 
-export default function ChatInput({ onSend, placeholder = 'How can I help you today?', disabled = false }: ChatInputProps) {
+export default function ChatInput({ onSend, placeholder = 'Chat with NEXA AI', disabled = false }: ChatInputProps) {
   const [text, setText] = useState('');
   const [thinking, setThinking] = useState(false);
   const [search, setSearch] = useState(false);
@@ -31,7 +31,7 @@ export default function ChatInput({ onSend, placeholder = 'How can I help you to
       setText('');
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to send message';
-      Alert.alert('Nexa AI', message);
+      Alert.alert('NEXA AI', message);
     }
   };
 
@@ -48,19 +48,19 @@ export default function ChatInput({ onSend, placeholder = 'How can I help you to
         <TextInput
           style={styles.textInput}
           placeholder={disabled ? 'Waiting for a reply…' : placeholder}
-          placeholderTextColor="#6b7280"
+          placeholderTextColor="#999999"
           value={text}
           onChangeText={setText}
           multiline
           maxLength={1000}
-          keyboardAppearance="dark"
+          keyboardAppearance="light"
           editable={!disabled}
         />
 
         <View style={styles.actionsRow}>
           <View style={styles.leftActions}>
             <TouchableOpacity style={styles.plusButton} activeOpacity={0.7}>
-              <Feather name="plus" size={16} color="#9ca3af" />
+              <Feather name="plus" size={16} color="#999999" />
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -71,7 +71,7 @@ export default function ChatInput({ onSend, placeholder = 'How can I help you to
               <MaterialCommunityIcons
                 name="brain"
                 size={13}
-                color={thinking ? '#3b82f6' : '#9ca3af'}
+                color={thinking ? '#D97757' : '#999999'}
                 style={styles.pillIcon}
               />
               <Text style={[styles.pillText, thinking && styles.pillTextActive]}>
@@ -87,7 +87,7 @@ export default function ChatInput({ onSend, placeholder = 'How can I help you to
               <Feather
                 name="globe"
                 size={12}
-                color={search ? '#3b82f6' : '#9ca3af'}
+                color={search ? '#D97757' : '#999999'}
                 style={styles.pillIcon}
               />
               <Text style={[styles.pillText, search && styles.pillTextActive]}>
@@ -106,9 +106,9 @@ export default function ChatInput({ onSend, placeholder = 'How can I help you to
             activeOpacity={0.7}
           >
             {text.trim().length > 0 && !disabled ? (
-              <Feather name="arrow-up" size={16} color="#000" />
+              <Feather name="arrow-up" size={16} color="#FFFFFF" />
             ) : (
-              <Feather name="star" size={15} color="#9ca3af" />
+              <Feather name="star" size={15} color="#CCCCCC" />
             )}
           </TouchableOpacity>
         </View>
@@ -119,18 +119,18 @@ export default function ChatInput({ onSend, placeholder = 'How can I help you to
 
 const styles = StyleSheet.create({
   bottomBar: {
-    backgroundColor: '#171717',
+    backgroundColor: '#F9F6F2',
     borderTopWidth: 1,
-    borderColor: '#262626',
+    borderColor: '#E5E1DA',
     width: '100%',
     paddingHorizontal: 16,
     paddingTop: 12,
   },
   inputContainer: {
-    backgroundColor: '#212121',
+    backgroundColor: '#FFFFFF',
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: '#333333',
+    borderColor: '#E5E1DA',
     paddingTop: 14,
     paddingBottom: 10,
     paddingHorizontal: 15,
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   textInput: {
-    color: '#ececec',
+    color: '#1D1D1D',
     fontSize: 15,
     lineHeight: 20,
     textAlignVertical: 'top',
@@ -163,35 +163,35 @@ const styles = StyleSheet.create({
     height: 28,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#374151',
+    borderColor: '#E5E1DA',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#2f2f2f',
+    backgroundColor: '#F9F6F2',
   },
   pillButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#2f2f2f',
+    backgroundColor: '#F9F6F2',
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#374151',
+    borderColor: '#E5E1DA',
     paddingVertical: 4,
     paddingHorizontal: 8,
   },
   pillButtonActive: {
-    borderColor: '#3b82f6',
-    backgroundColor: '#1e3a8a30',
+    borderColor: '#D97757',
+    backgroundColor: '#FFF4F0',
   },
   pillIcon: {
     marginRight: 4,
   },
   pillText: {
-    color: '#9ca3af',
+    color: '#999999',
     fontSize: 11,
     fontWeight: '500',
   },
   pillTextActive: {
-    color: '#3b82f6',
+    color: '#D97757',
     fontWeight: '600',
   },
   sendButton: {
@@ -200,13 +200,13 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#2f2f2f',
+    backgroundColor: '#F9F6F2',
     borderWidth: 1,
-    borderColor: '#374151',
+    borderColor: '#E5E1DA',
   },
   sendButtonActive: {
-    backgroundColor: '#ffffff',
-    borderColor: '#ffffff',
+    backgroundColor: '#D97757',
+    borderColor: '#D97757',
   },
   inputContainerDisabled: {
     opacity: 0.6,

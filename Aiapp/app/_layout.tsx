@@ -1,17 +1,17 @@
 ﻿import 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Drawer } from 'expo-router/drawer';
-import { DarkTheme, ThemeProvider } from '@react-navigation/native';
+import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import HistoryChatsDrawer from '@/HistoryChatsDrawer';
 import { ChatProvider } from '@/state/ChatProvider';
 
 const appTheme = {
-  ...DarkTheme,
+  ...DefaultTheme,
   colors: {
-    ...DarkTheme.colors,
-    primary: '#7fb5ff',
-    background: '#0B0B0F',
-    card: '#0B0B0F',
+    ...DefaultTheme.colors,
+    primary: '#D97757',
+    background: '#F9F6F2',
+    card: '#F9F6F2',
   },
 };
 
@@ -24,16 +24,16 @@ export default function RootLayout() {
             drawerContent={(props) => <HistoryChatsDrawer {...props} />}
             screenOptions={{
               headerShown: false,
-              overlayColor: 'rgba(0,0,0,0.55)',
+              overlayColor: 'rgba(0,0,0,0.15)',
               drawerStyle: {
-                backgroundColor: '#15151A',
+                backgroundColor: '#F9F6F2',
                 width: 298,
                 borderRightWidth: 1,
-                borderRightColor: '#2E2E37',
+                borderRightColor: '#E5E1DA',
               },
             }}
           >
-            <Drawer.Screen name="index" options={{ drawerLabel: 'Nexa AI' }} />
+            <Drawer.Screen name="index" options={{ drawerLabel: 'NEXA AI' }} />
             <Drawer.Screen name="chat/[id]" options={{ drawerItemStyle: { display: 'none' } }} />
           </Drawer>
         </ChatProvider>

@@ -107,7 +107,7 @@ export default function ChatScreen() {
     return (
       <View style={styles.orbLoaderRow}>
         <Animated.View style={{ opacity: pulseAnim, transform: [{ scale: pulseAnim }] }}>
-          <NexaLogo size="sm" layout="horizontal" theme="dark" animated={true} />
+          <NexaLogo size="sm" layout="horizontal" theme="light" animated={true} />
         </Animated.View>
         <Text style={styles.thinkingText}>Thinking{dots}</Text>
       </View>
@@ -129,7 +129,7 @@ export default function ChatScreen() {
 
     return (
       <Animated.View style={{ transform: [{ rotate }] }}>
-        <Feather name="loader" size={32} color="#666" />
+        <Feather name="loader" size={32} color="#D97757" />
       </Animated.View>
     );
   };
@@ -146,7 +146,7 @@ export default function ChatScreen() {
   if (!chat || error) {
     return (
       <View style={styles.errorContainer}>
-        <Feather name="alert-circle" size={32} color="#666" />
+        <Feather name="alert-circle" size={32} color="#D97757" />
         <Text style={styles.errorText}>Conversation not found</Text>
       </View>
     );
@@ -164,7 +164,7 @@ export default function ChatScreen() {
         activeOpacity={0.7}
         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       >
-        <Feather name="menu" size={22} color="rgba(255,255,255,0.85)" />
+        <Feather name="menu" size={22} color="#666666" />
       </TouchableOpacity>
 
       <ScrollView
@@ -174,7 +174,7 @@ export default function ChatScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.hero}>
-          <NexaLogo size="md" layout="vertical" theme="dark" animated={false} />
+          <NexaLogo size="md" layout="vertical" theme="light" animated={false} />
           <Text style={styles.chatTitle} numberOfLines={2}>{chat.title}</Text>
           <Text style={styles.chatSub}>Your conversation is ready.</Text>
         </View>
@@ -182,7 +182,7 @@ export default function ChatScreen() {
         {chat.messages.length === 0 ? (
           <View style={styles.emptyState}>
             <Text style={styles.emptyTitle}>Ask your first question</Text>
-            <Text style={styles.emptyText}>Nexa AI will answer here with clear, formatted text.</Text>
+            <Text style={styles.emptyText}>NEXA AI will answer here with clear, formatted text.</Text>
           </View>
         ) : (
           chat.messages.map(message => <ChatMessageBubble key={message.id} message={message} />)
@@ -207,7 +207,7 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0C0C10',
+    backgroundColor: '#F9F6F2',
   },
   menuBtn: {
     position: 'absolute',
@@ -215,7 +215,9 @@ const styles = StyleSheet.create({
     zIndex: 10,
     padding: 8,
     borderRadius: 10,
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: 'rgba(0,0,0,0.04)',
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.08)',
   },
   messages: {
     flex: 1,
@@ -233,7 +235,7 @@ const styles = StyleSheet.create({
     marginTop: 18,
     fontSize: 22,
     fontWeight: '700',
-    color: '#EAEAF2',
+    color: '#1D1D1D',
     textAlign: 'center',
     lineHeight: 30,
     letterSpacing: -0.4,
@@ -242,7 +244,7 @@ const styles = StyleSheet.create({
   chatSub: {
     marginTop: 8,
     fontSize: 13,
-    color: 'rgba(255,255,255,0.38)',
+    color: 'rgba(0,0,0,0.38)',
     fontWeight: '400',
   },
   emptyState: {
@@ -250,13 +252,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyTitle: {
-    color: '#FFFFFF',
+    color: '#1D1D1D',
     fontSize: 16,
     fontWeight: '700',
     marginBottom: 6,
   },
   emptyText: {
-    color: 'rgba(255,255,255,0.55)',
+    color: 'rgba(0,0,0,0.55)',
     fontSize: 13,
     textAlign: 'center',
     maxWidth: 260,
@@ -271,7 +273,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   thinkingText: {
-    color: 'rgba(255,255,255,0.55)',
+    color: 'rgba(0,0,0,0.55)',
     fontSize: 13,
     fontWeight: '500',
   },
@@ -285,31 +287,31 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     paddingVertical: 12,
     paddingHorizontal: 14,
-    backgroundColor: '#1D1F26',
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#30313A',
+    borderColor: '#E5E1DA',
     borderBottomLeftRadius: 8,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#0C0C10',
+    backgroundColor: '#F9F6F2',
   },
   loadingText: {
     marginTop: 12,
-    color: '#888',
+    color: '#666666',
     fontSize: 16,
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#0C0C10',
+    backgroundColor: '#F9F6F2',
     gap: 12,
   },
   errorText: {
-    color: '#888',
+    color: '#666666',
     fontSize: 15,
     fontWeight: '500',
   },

@@ -20,19 +20,19 @@ type SectionedChats = {
 };
 
 const C = {
-  bg: '#15151A',
-  bgElevated: '#22222B',
-  border: '#2E2E37',
-  borderStrong: '#3A3A46',
-  icon: '#C7C8D1',
-  label: '#F2F3F7',
-  labelMuted: '#9A9BA8',
-  rowActive: '#2A2A35',
-  avatarBg: '#1a6fd4',
-  upgradeBtn: '#252530',
-  upgradeTxt: '#F4F4F8',
-  upgradeBdr: '#383846',
-  newChatBg: '#242430',
+  bg: '#F9F6F2',
+  bgElevated: '#FFFFFF',
+  border: '#E5E1DA',
+  borderStrong: '#D9D4CC',
+  icon: '#666666',
+  label: '#1D1D1D',
+  labelMuted: '#999999',
+  rowActive: '#F0EBE3',
+  avatarBg: '#D97757',
+  upgradeBtn: '#F0EBE3',
+  upgradeTxt: '#1D1D1D',
+  upgradeBdr: '#E5E1DA',
+  newChatBg: '#FFFFFF',
 };
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -114,7 +114,7 @@ export default function HistoryChatsDrawer(props: DrawerContentComponentProps) {
   return (
     <View style={styles.root}>
       <View style={styles.header}>
-        <NexaLogo size="lg" layout="vertical" theme="dark" animated={false} />
+        <NexaLogo size="lg" layout="vertical" theme="light" animated={false} />
         <TouchableOpacity
           onPress={() => props.navigation.closeDrawer()}
           style={styles.closeBtn}
@@ -188,12 +188,12 @@ export default function HistoryChatsDrawer(props: DrawerContentComponentProps) {
       <View style={styles.footer}>
         <View style={styles.footerRow}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarTxt}>SY</Text>
+            <Text style={styles.avatarTxt}>NA</Text>
           </View>
 
           <View style={styles.nameBlock}>
-            <Text style={styles.name}>Sarika Yeole</Text>
-            <Text style={styles.tier}>Free</Text>
+            <Text style={styles.name}>NEXA AI</Text>
+            <Text style={styles.tier}>Pro</Text>
           </View>
 
           <TouchableOpacity style={styles.upgradeBtn} activeOpacity={0.8}>
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
   },
   chatTitle: { fontSize: 13.5, fontWeight: '500' },
   chatTitleActive: { color: C.label },
-  chatTitleIdle: { color: '#D0D1DA' },
+  chatTitleIdle: { color: '#999999' },
   ellipsisBtn: { padding: 6 },
   emptyWrap: {
     alignItems: 'center',

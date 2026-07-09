@@ -48,15 +48,15 @@ export default function IndexScreen() {
         activeOpacity={0.72}
         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       >
-        <Feather name="menu" size={22} color="rgba(255,255,255,0.9)" />
+        <Feather name="menu" size={22} color="#666666" />
       </TouchableOpacity>
 
       <View style={styles.canvas}>
         <View style={{ transform: [{ scale: logoScale }] }}>
-          <NexaLogo size="lg" layout="vertical" theme="dark" animated={false} />
+          <NexaLogo size="lg" layout="vertical" theme="light" animated={false} />
         </View>
 
-        <Text style={[styles.headline, { fontSize: headlineSize, lineHeight: headlineLineHeight }]}>What are you thinking about today?</Text>
+        <Text style={[styles.headline, { fontSize: headlineSize, lineHeight: headlineLineHeight }]}>How can I help you this evening?</Text>
 
         <Text style={styles.subhead}>Ask anything and a new chat will be created automatically.</Text>
       </View>
@@ -69,7 +69,7 @@ export default function IndexScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0B0B0F',
+    backgroundColor: '#F9F6F2',
   },
   menuBtn: {
     position: 'absolute',
@@ -77,9 +77,9 @@ const styles = StyleSheet.create({
     zIndex: 10,
     padding: 8,
     borderRadius: 12,
-    backgroundColor: 'rgba(255,255,255,0.07)',
+    backgroundColor: 'rgba(0,0,0,0.04)',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
+    borderColor: 'rgba(0,0,0,0.08)',
   },
   canvas: {
     flex: 1,
@@ -89,20 +89,19 @@ const styles = StyleSheet.create({
   },
   headline: {
     marginTop: 30,
-    fontWeight: '700',
-    color: '#F2F3F7',
+    fontWeight: '600',
+    color: '#1D1D1D',
     textAlign: 'center',
-    letterSpacing: -0.9,
+    letterSpacing: -0.5,
     fontFamily: 'System',
     maxWidth: 340,
   },
   subhead: {
     marginTop: 12,
     fontSize: 13,
-    color: 'rgba(255,255,255,0.45)',
+    color: 'rgba(0,0,0,0.45)',
     textAlign: 'center',
     lineHeight: 19,
     maxWidth: 300,
   },
 });
-

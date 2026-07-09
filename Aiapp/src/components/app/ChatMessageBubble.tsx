@@ -60,32 +60,32 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
   },
   userBubble: {
-    backgroundColor: '#2E6BFF',
+    backgroundColor: '#E8DDD3',
     borderBottomRightRadius: 8,
   },
   assistantBubble: {
-    backgroundColor: '#1D1F26',
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#30313A',
+    borderColor: '#E5E1DA',
     borderBottomLeftRadius: 8,
   },
   line: {
-    color: '#FFFFFF',
+    color: '#1D1D1D',
     fontSize: 15,
     lineHeight: 22,
   },
   text: {
-    color: '#FFFFFF',
+    color: '#1D1D1D',
     fontSize: 15,
     lineHeight: 22,
   },
   boldText: {
-    color: '#FFFFFF',
+    color: '#1D1D1D',
     fontSize: 15,
     lineHeight: 22,
     fontWeight: '800',
   },
   bullet: {
-    color: '#FFFFFF',
+    color: '#1D1D1D',
   },
 });
