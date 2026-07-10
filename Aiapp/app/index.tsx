@@ -9,6 +9,7 @@ import {
   ScrollView,
   Animated,
   Easing,
+  Image,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from 'expo-router';
@@ -30,7 +31,6 @@ export default function IndexScreen() {
   const currentChat = chats.length > 0 ? chats[0] : null;
 
   useEffect(() => {
-    // Check if there are messages to display
     if (currentChat && currentChat.messages.length > 0) {
       setShowWelcome(false);
     } else {
@@ -97,14 +97,30 @@ export default function IndexScreen() {
       style={styles.container}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
-      <TouchableOpacity
-        style={[styles.menuBtn, { top: Math.max(insets.top + 4, 20) }]}
-        onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-        activeOpacity={0.65}
-        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-      >
-        <Feather name="menu" size={22} color="#666666" />
-      </TouchableOpacity>
+      {/* Header */}
+      <View style={[styles.header, { paddingTop: Math.max(insets.top, 12) }]}>
+        <TouchableOpacity
+          style={styles.menuBtn}
+          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+          activeOpacity={0.65}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Feather name="menu" size={24} color="#1D1D1D" />
+        </TouchableOpacity>
+
+        <View style={styles.headerCenter}>
+          <Image
+            source={require('@assets/logo.jpg')}
+            style={styles.headerLogo}
+            resizeMode="contain"
+          />
+          <Text style={styles.headerTitle}>NEXA AI</Text>
+        </View>
+
+        <View style={styles.spacer} />
+      </View>
+
+      <View style={styles.divider} />
 
       {showWelcome && !currentChat ? (
         <ScrollView
@@ -164,15 +180,42 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F9F6F2',
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E1DA',
+  },
   menuBtn: {
-    position: 'absolute',
-    left: 18,
-    zIndex: 10,
     padding: 8,
-    borderRadius: 12,
-    backgroundColor: 'rgba(0,0,0,0.04)',
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.08)',
+    borderRadius: 10,
+    backgroundColor: 'rgba(0,0,0,0.05)',
+  },
+  headerCenter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  headerLogo: {
+    width: 32,
+    height: 32,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#1D1D1D',
+    letterSpacing: -0.5,
+  },
+  spacer: {
+    width: 40,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#E5E1DA',
   },
   messages: {
     flex: 1,

@@ -2,227 +2,103 @@ import React from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
-  ScrollView,
   StyleSheet,
-  Alert,
-  Image,
+  ScrollView,
+  TouchableOpacity,
+  SafeAreaView,
 } from 'react-native';
-import { DrawerContentComponentProps } from '@react-navigation/drawer';
-import { router, usePathname } from 'expo-router';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { Feather } from '@expo/vector-icons';
-import NexaLogo from './components/app/NexaLogo';
 import { useChat } from '@/state/ChatProvider';
 
-type SectionedChats = {
-  today: { id: string; title: string }[];
-  yesterday: { id: string; title: string }[];
-  older: { id: string; title: string }[];
+type Props = {
+  navigation: DrawerNavigationProp<any>;
 };
 
-const C = {
-  bg: '#F9F6F2',
-  bgElevated: '#FFFFFF',
-  border: '#E5E1DA',
-  borderStrong: '#D9D4CC',
-  icon: '#666666',
-  label: '#1D1D1D',
-  labelMuted: '#999999',
-  rowActive: '#F0EBE3',
-  avatarBg: '#D97757',
-  upgradeBtn: '#F0EBE3',
-  upgradeTxt: '#1D1D1D',
-  upgradeBdr: '#E5E1DA',
-  newChatBg: '#FFFFFF',
-  hoverBg: '#F5F2ED',
-};
-
-const DAY = 24 * 60 * 60 * 1000;
-
-export default function HistoryChatsDrawer(props: DrawerContentComponentProps) {
-  const pathname = usePathname();
-  const { chats, openThread, deleteChat, startNewChat } = useChat();
+export default function HistoryChatsDrawer({ navigation }: Props) {
+  const { chats, createNewChat } = useChat();
 
   const handleNewChat = () => {
-    startNewChat();
-    props.navigation.closeDrawer();
-    router.replace('/');
+    createNewChat();
+    navigation.closeDrawer();
   };
 
-  const handleSelectChat = (id: string) => {
-    openThread(id);
-    props.navigation.closeDrawer();
-    router.push({ pathname: '/chat/[id]', params: { id } });
+  const handleSelectChat = (chatId: string) => {
+    navigation.navigate('chat', { id: chatId });
+    navigation.closeDrawer();
   };
-
-  const handleOpenMenu = (item: { id: string; title: string }) => {
-    Alert.alert(item.title || 'Chat options', 'What do you want to do?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: () => {
-          const wasActive = pathname === `/chat/${item.id}`;
-          deleteChat(item.id);
-          if (wasActive) {
-            props.navigation.closeDrawer();
-            router.replace('/');
-          }
-        },
-      },
-    ]);
-  };
-
-  const now = Date.now();
-  const sectioned = chats.reduce<SectionedChats>((acc, chat) => {
-    const item = { id: chat.id, title: chat.title };
-    const age = now - chat.updatedAt;
-    if (age < DAY) acc.today.unshift(item);
-    else if (age < DAY * 2) acc.yesterday.unshift(item);
-    else acc.older.unshift(item);
-    return acc;
-  }, { today: [], yesterday: [], older: [] });
-
-  const ChatRow = ({ item }: { item: { id: string; title: string } }) => {
-    const active = pathname === `/chat/${item.id}`;
-    return (
-      <View style={[styles.chatRow, active && styles.chatRowActive]}>
-        <TouchableOpacity
-          style={styles.chatRowBtn}
-          onPress={() => handleSelectChat(item.id)}
-          activeOpacity={0.6}
-        >
-          <Feather 
-            name="message-square" 
-            size={16} 
-            color={active ? '#D97757' : C.labelMuted} 
-            style={styles.chatIcon}
-          />
-          <Text
-            style={[styles.chatTitle, active ? styles.chatTitleActive : styles.chatTitleIdle]}
-            numberOfLines={1}
-          >
-            {item.title}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.ellipsisBtn}
-          onPress={() => handleOpenMenu(item)}
-          activeOpacity={0.6}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <Feather name="more-horizontal" size={16} color={active ? C.label : C.labelMuted} />
-        </TouchableOpacity>
-      </View>
-    );
-  };
-
-  const SectionLabel = ({ title }: { title: string }) => <Text style={styles.sectionLabel}>{title}</Text>;
 
   return (
-    <View style={styles.root}>
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
-        <View style={styles.logoContainer}>
-          <NexaLogo size="sm" layout="horizontal" theme="light" />
-        </View>
+        <Text style={styles.headerTitle}>NEXA AI</Text>
         <TouchableOpacity
-          onPress={() => props.navigation.closeDrawer()}
           style={styles.closeBtn}
-          activeOpacity={0.65}
+          onPress={() => navigation.closeDrawer()}
+          activeOpacity={0.7}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Feather name="chevron-left" size={22} color={C.label} />
+          <Feather name="x" size={24} color="#1D1D1D" />
         </TouchableOpacity>
       </View>
 
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+      <View style={styles.divider} />
+
+      {/* New Chat Button */}
+      <TouchableOpacity
+        style={styles.newChatBtn}
+        onPress={handleNewChat}
+        activeOpacity={0.75}
       >
-        <TouchableOpacity style={styles.newChatRow} onPress={handleNewChat} activeOpacity={0.75}>
-          <Feather name="edit-3" size={18} color={C.label} style={styles.rowIcon} />
-          <Text style={styles.newChatText}>New chat</Text>
-        </TouchableOpacity>
+        <Feather name="plus" size={18} color="#FFFFFF" />
+        <Text style={styles.newChatText}>New Chat</Text>
+      </TouchableOpacity>
 
-        <View style={styles.navSection}>
-          {[
-            { icon: 'search', label: 'Search chats' },
-            { icon: 'book-open', label: 'Library' },
-            { icon: 'folder', label: 'Projects', badge: '+' },
-            { icon: 'grid', label: 'Apps' },
-            { icon: 'settings', label: 'Settings' },
-          ].map(({ icon, label, badge }) => (
-            <TouchableOpacity key={label} style={styles.navRow} activeOpacity={0.65}>
-              <Feather name={icon as any} size={18} color={C.icon} style={styles.rowIcon} />
-              <Text style={styles.navText}>{label}</Text>
-              {badge && (
-                <View style={styles.badgeWrap}>
-                  <Feather name="plus" size={14} color={C.labelMuted} />
-                </View>
-              )}
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        <View style={styles.divider} />
-
-        {sectioned.today.length > 0 && (
-          <>
-            <SectionLabel title="Today" />
-            {sectioned.today.map(item => <ChatRow key={item.id} item={item} />)}
-          </>
-        )}
-
-        {sectioned.yesterday.length > 0 && (
-          <>
-            <SectionLabel title="Yesterday" />
-            {sectioned.yesterday.map(item => <ChatRow key={item.id} item={item} />)}
-          </>
-        )}
-
-        {sectioned.older.length > 0 && (
-          <>
-            <SectionLabel title="Previous 7 Days" />
-            {sectioned.older.map(item => <ChatRow key={item.id} item={item} />)}
-          </>
-        )}
-
-        {chats.length === 0 && (
-          <View style={styles.emptyWrap}>
-            <Feather name="message-square" size={24} color={C.labelMuted} />
-            <Text style={styles.emptyText}>No conversations yet</Text>
-            <Text style={styles.emptySubtext}>Start a new chat to see it here.</Text>
+      {/* Chat History */}
+      <ScrollView
+        style={styles.chatList}
+        showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+      >
+        <Text style={styles.sectionLabel}>Recent</Text>
+        {chats.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Feather name="inbox" size={32} color="#CCCCCC" />
+            <Text style={styles.emptyText}>No chats yet</Text>
           </View>
+        ) : (
+          chats.map(chat => (
+            <TouchableOpacity
+              key={chat.id}
+              style={styles.chatItem}
+              onPress={() => handleSelectChat(chat.id)}
+              activeOpacity={0.65}
+            >
+              <Feather name="message-circle" size={16} color="#D97757" />
+              <Text style={styles.chatTitle} numberOfLines={1}>
+                {chat.title}
+              </Text>
+            </TouchableOpacity>
+          ))
         )}
       </ScrollView>
 
+      {/* Footer */}
       <View style={styles.footer}>
-        <View style={styles.footerDivider} />
-        <View style={styles.footerRow}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarTxt}>NA</Text>
-          </View>
-
-          <View style={styles.nameBlock}>
-            <Text style={styles.name}>NEXA AI</Text>
-            <Text style={styles.tier}>Pro Plan</Text>
-          </View>
-
-          <TouchableOpacity style={styles.upgradeBtn} activeOpacity={0.75}>
-            <Feather name="arrow-up-right" size={14} color={C.upgradeTxt} />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={styles.footerItem} activeOpacity={0.7}>
+          <Feather name="settings" size={18} color="#666666" />
+          <Text style={styles.footerText}>Settings</Text>
+        </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  root: {
+  container: {
     flex: 1,
-    backgroundColor: C.bg,
-    paddingTop: 52,
+    backgroundColor: '#FFFFFF',
   },
   header: {
     flexDirection: 'row',
@@ -230,157 +106,105 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderColor: C.border,
-    backgroundColor: C.bg,
   },
-  logoContainer: {
-    flex: 1,
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#1D1D1D',
+    letterSpacing: -0.5,
   },
   closeBtn: {
-    width: 38,
-    height: 38,
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 8,
     borderRadius: 10,
-    backgroundColor: C.bgElevated,
-    borderWidth: 1,
-    borderColor: C.borderStrong,
+    backgroundColor: 'rgba(0,0,0,0.05)',
   },
-  scroll: { flex: 1 },
-  scrollContent: { paddingHorizontal: 10, paddingVertical: 12, paddingBottom: 20 },
-  newChatRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: C.newChatBg,
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: C.border,
-  },
-  newChatText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: C.label,
-    letterSpacing: 0.2,
-  },
-  navSection: {
-    marginBottom: 4,
-  },
-  navRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 10,
-    paddingVertical: 11,
-    paddingHorizontal: 12,
-    marginBottom: 3,
-  },
-  navText: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: C.label,
-    flex: 1,
-  },
-  rowIcon: { marginRight: 12 },
-  badgeWrap: { padding: 2 },
   divider: {
     height: 1,
-    backgroundColor: C.border,
-    marginVertical: 14,
-    marginHorizontal: 4,
+    backgroundColor: '#E5E1DA',
+    marginHorizontal: 12,
   },
-  sectionLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: C.labelMuted,
-    letterSpacing: 0.8,
-    textTransform: 'uppercase',
-    paddingHorizontal: 10,
-    paddingBottom: 8,
-    paddingTop: 6,
-  },
-  chatRow: {
+  newChatBtn: {
     flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 10,
-    marginBottom: 3,
-    height: 42,
-    paddingRight: 4,
-  },
-  chatRowActive: { backgroundColor: C.rowActive },
-  chatRowBtn: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    paddingLeft: 8,
-    height: '100%',
-  },
-  chatIcon: {
-    marginRight: 10,
-  },
-  chatTitle: { fontSize: 14, fontWeight: '500' },
-  chatTitleActive: { color: C.label, fontWeight: '600' },
-  chatTitleIdle: { color: '#999999' },
-  ellipsisBtn: { padding: 6 },
-  emptyWrap: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 40,
-    paddingHorizontal: 20,
     gap: 8,
+    marginHorizontal: 12,
+    marginVertical: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: '#D97757',
+    borderRadius: 12,
+    shadowColor: '#D97757',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  newChatText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  sectionLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#999999',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginHorizontal: 16,
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  chatList: {
+    flex: 1,
+    paddingHorizontal: 12,
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: 40,
   },
   emptyText: {
+    marginTop: 12,
     fontSize: 14,
     fontWeight: '600',
-    color: C.labelMuted,
-    marginTop: 4,
+    color: '#999999',
   },
-  emptySubtext: {
-    fontSize: 13,
-    color: C.labelMuted,
-    opacity: 0.7,
-    textAlign: 'center',
+  chatItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    marginBottom: 6,
+    borderRadius: 10,
+    backgroundColor: '#F9F6F2',
+    borderWidth: 1,
+    borderColor: 'rgba(217, 119, 87, 0.08)',
+  },
+  chatTitle: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#1D1D1D',
+    marginLeft: 10,
   },
   footer: {
     borderTopWidth: 1,
-    borderColor: C.border,
-    backgroundColor: C.bg,
+    borderTopColor: '#E5E1DA',
+    paddingHorizontal: 12,
+    paddingVertical: 12,
   },
-  footerDivider: {
-    height: 1,
-    backgroundColor: C.border,
-  },
-  footerRow: {
+  footerItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: C.avatarBg,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarTxt: { color: '#fff', fontSize: 13, fontWeight: '700' },
-  nameBlock: { flex: 1, marginLeft: 12, marginRight: 10 },
-  name: { fontSize: 14, fontWeight: '700', color: C.label },
-  tier: { fontSize: 12, color: C.labelMuted, marginTop: 2, fontWeight: '500' },
-  upgradeBtn: {
-    width: 36,
-    height: 36,
-    borderWidth: 1,
-    borderColor: C.upgradeBdr,
+    gap: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
     borderRadius: 10,
-    paddingVertical: 6,
-    paddingHorizontal: 8,
-    backgroundColor: C.upgradeBtn,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#F9F6F2',
+  },
+  footerText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#666666',
   },
 });
