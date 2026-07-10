@@ -16,10 +16,10 @@ type Props = {
 };
 
 export default function HistoryChatsDrawer({ navigation }: Props) {
-  const { chats, createNewChat } = useChat();
+  const { chats, startNewChat } = useChat();
 
   const handleNewChat = () => {
-    createNewChat();
+    startNewChat();
     navigation.closeDrawer();
   };
 

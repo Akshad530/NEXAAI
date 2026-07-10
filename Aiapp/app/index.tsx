@@ -24,7 +24,7 @@ export default function IndexScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const scrollRef = useRef<ScrollView>(null);
-  const { chats, sendMessage } = useChat();
+  const { chats, sendMessage, startNewChat } = useChat();
   const [aiLoading, setAiLoading] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
 
@@ -84,7 +84,11 @@ export default function IndexScreen() {
     return (
       <View style={styles.orbLoaderRow}>
         <Animated.View style={{ opacity: pulseAnim, transform: [{ scale: pulseAnim }] }}>
-          <NexaLogo size="sm" layout="horizontal" theme="light" />
+          <Image
+            source={require('@assets/logo.jpg')}
+            style={styles.loaderLogo}
+            resizeMode="contain"
+          />
         </Animated.View>
         <Text style={styles.thinkingText}>NEXA is thinking{dots}</Text>
       </View>
@@ -103,7 +107,7 @@ export default function IndexScreen() {
           style={styles.menuBtn}
           onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
           activeOpacity={0.65}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
           <Feather name="menu" size={24} color="#1D1D1D" />
         </TouchableOpacity>
@@ -117,10 +121,15 @@ export default function IndexScreen() {
           <Text style={styles.headerTitle}>NEXA AI</Text>
         </View>
 
-        <View style={styles.spacer} />
+        <TouchableOpacity
+          style={styles.newChatBtn}
+          onPress={startNewChat}
+          activeOpacity={0.7}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <Feather name="plus" size={20} color="#1D1D1D" />
+        </TouchableOpacity>
       </View>
-
-      <View style={styles.divider} />
 
       {showWelcome && !currentChat ? (
         <ScrollView
@@ -130,7 +139,11 @@ export default function IndexScreen() {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.welcomeContainer}>
-            <NexaLogo size="lg" layout="vertical" theme="light" />
+            <Image
+              source={require('@assets/logo.jpg')}
+              style={styles.welcomeLogo}
+              resizeMode="contain"
+            />
             <Text style={styles.welcomeHeadline}>
               How can I help you today?
             </Text>
@@ -148,7 +161,11 @@ export default function IndexScreen() {
         >
           {currentChat && currentChat.messages.length === 0 ? (
             <View style={styles.emptyState}>
-              <NexaLogo size="md" layout="vertical" theme="light" />
+              <Image
+                source={require('@assets/logo.jpg')}
+                style={styles.emptyLogo}
+                resizeMode="contain"
+              />
               <Text style={styles.emptyTitle}>Start a conversation</Text>
               <Text style={styles.emptyText}>Ask your first question below</Text>
             </View>
@@ -198,24 +215,22 @@ const styles = StyleSheet.create({
   headerCenter: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 8,
   },
   headerLogo: {
-    width: 32,
-    height: 32,
+    width: 28,
+    height: 28,
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '800',
     color: '#1D1D1D',
     letterSpacing: -0.5,
   },
-  spacer: {
-    width: 40,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#E5E1DA',
+  newChatBtn: {
+    padding: 8,
+    borderRadius: 10,
+    backgroundColor: 'rgba(0,0,0,0.05)',
   },
   messages: {
     flex: 1,
@@ -229,17 +244,20 @@ const styles = StyleSheet.create({
   welcomeContainer: {
     alignItems: 'center',
   },
+  welcomeLogo: {
+    width: 80,
+    height: 80,
+    marginBottom: 24,
+  },
   welcomeHeadline: {
-    marginTop: 32,
-    fontSize: 36,
+    fontSize: 32,
     fontWeight: '700',
     color: '#1D1D1D',
     textAlign: 'center',
     letterSpacing: -0.5,
-    maxWidth: 360,
+    marginBottom: 12,
   },
   welcomeSubhead: {
-    marginTop: 16,
     fontSize: 15,
     color: 'rgba(0,0,0,0.52)',
     textAlign: 'center',
@@ -256,20 +274,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 40,
   },
+  emptyLogo: {
+    width: 60,
+    height: 60,
+    marginBottom: 16,
+  },
   emptyTitle: {
-    marginTop: 20,
     color: '#1D1D1D',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '700',
+    marginBottom: 4,
   },
   emptyText: {
-    marginTop: 8,
     color: 'rgba(0,0,0,0.55)',
     fontSize: 14,
     textAlign: 'center',
   },
   inputWrap: {
     paddingBottom: 4,
+  },
+  loaderLogo: {
+    width: 24,
+    height: 24,
   },
   orbLoaderRow: {
     flexDirection: 'row',
