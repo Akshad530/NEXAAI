@@ -16,7 +16,7 @@ interface ChatInputProps {
   disabled?: boolean;
 }
 
-export default function ChatInput({ onSend, placeholder = 'Chat with NEXA AI', disabled = false }: ChatInputProps) {
+export default function ChatInput({ onSend, placeholder = 'Ask NEXA AI anything...', disabled = false }: ChatInputProps) {
   const [text, setText] = useState('');
   const [thinking, setThinking] = useState(false);
   const [search, setSearch] = useState(false);
@@ -47,12 +47,12 @@ export default function ChatInput({ onSend, placeholder = 'Chat with NEXA AI', d
       <View style={[styles.inputContainer, disabled && styles.inputContainerDisabled]}>
         <TextInput
           style={styles.textInput}
-          placeholder={disabled ? 'Waiting for a reply…' : placeholder}
-          placeholderTextColor="#999999"
+          placeholder={disabled ? 'Waiting for response…' : placeholder}
+          placeholderTextColor="#BBBBBB"
           value={text}
           onChangeText={setText}
           multiline
-          maxLength={1000}
+          maxLength={2000}
           keyboardAppearance="light"
           editable={!disabled}
         />
@@ -128,23 +128,29 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    borderWidth: 1,
+    borderRadius: 24,
+    borderWidth: 1.5,
     borderColor: '#E5E1DA',
     paddingTop: 14,
     paddingBottom: 10,
-    paddingHorizontal: 15,
-    minHeight: 102,
+    paddingHorizontal: 16,
+    minHeight: 108,
     justifyContent: 'space-between',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
   textInput: {
     color: '#1D1D1D',
-    fontSize: 15,
-    lineHeight: 20,
+    fontSize: 16,
+    lineHeight: 22,
     textAlignVertical: 'top',
     padding: 0,
     margin: 0,
-    maxHeight: 120,
+    maxHeight: 140,
+    fontWeight: '400',
   },
   actionsRow: {
     flexDirection: 'row',
@@ -175,8 +181,8 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     borderWidth: 1,
     borderColor: '#E5E1DA',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
+    paddingVertical: 5,
+    paddingHorizontal: 9,
   },
   pillButtonActive: {
     borderColor: '#D97757',
@@ -195,9 +201,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   sendButton: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#F9F6F2',
@@ -207,6 +213,11 @@ const styles = StyleSheet.create({
   sendButtonActive: {
     backgroundColor: '#D97757',
     borderColor: '#D97757',
+    shadowColor: '#D97757',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.35,
+    shadowRadius: 5,
+    elevation: 4,
   },
   inputContainerDisabled: {
     opacity: 0.6,

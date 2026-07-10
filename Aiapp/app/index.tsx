@@ -1,4 +1,4 @@
-﻿import React from 'react';
+﻿import React, { useRef, useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,34 +6,89 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
-  useWindowDimensions,
+  ScrollView,
+  Animated,
+  Easing,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation, useRouter } from 'expo-router';
+import { useNavigation } from 'expo-router';
 import { DrawerActions } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import ChatInput from '@/components/app/ChatInput';
 import NexaLogo from '@/components/app/NexaLogo';
+import ChatMessageBubble from '@/components/app/ChatMessageBubble';
 import { useChat } from '@/state/ChatProvider';
 
 export default function IndexScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-  const router = useRouter();
-  const { sendMessage } = useChat();
-  const { width } = useWindowDimensions();
+  const scrollRef = useRef<ScrollView>(null);
+  const { chats, sendMessage } = useChat();
+  const [aiLoading, setAiLoading] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(true);
 
-  const headlineSize = width < 360 ? 24 : width < 420 ? 28 : 32;
-  const headlineLineHeight = width < 360 ? 31 : width < 420 ? 36 : 40;
-  const logoScale = width < 360 ? 0.92 : 1;
+  const currentChat = chats.length > 0 ? chats[0] : null;
+
+  useEffect(() => {
+    // Check if there are messages to display
+    if (currentChat && currentChat.messages.length > 0) {
+      setShowWelcome(false);
+    } else {
+      setShowWelcome(true);
+    }
+  }, [currentChat]);
 
   const handleSend = async (text: string) => {
     try {
-      const chatId = await sendMessage({ text });
-      router.push({ pathname: '/chat/[id]', params: { id: chatId } });
-    } catch {
-      // ChatInput already shows the error alert.
+      setShowWelcome(false);
+      setAiLoading(true);
+      await sendMessage({ text });
+      requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
+    } catch (error) {
+      console.error('Send message error:', error);
+    } finally {
+      setAiLoading(false);
     }
+  };
+
+  const BlurryLoader = () => {
+    const pulseAnim = useRef(new Animated.Value(0.5)).current;
+    const dotsAnim = useRef(new Animated.Value(0)).current;
+    const [dots, setDots] = useState('');
+
+    useEffect(() => {
+      const loop = Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseAnim, { toValue: 1, duration: 800, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+          Animated.timing(pulseAnim, { toValue: 0.5, duration: 800, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        ])
+      );
+      loop.start();
+
+      const dotsLoop = Animated.loop(
+        Animated.timing(dotsAnim, { toValue: 3, duration: 1200, easing: Easing.linear, useNativeDriver: false })
+      );
+      dotsLoop.start();
+
+      const listenerId = dotsAnim.addListener(({ value }) => {
+        setDots('.'.repeat(Math.floor(value % 4)));
+      });
+
+      return () => {
+        loop.stop();
+        dotsLoop.stop();
+        dotsAnim.removeListener(listenerId);
+      };
+    }, [pulseAnim, dotsAnim]);
+
+    return (
+      <View style={styles.orbLoaderRow}>
+        <Animated.View style={{ opacity: pulseAnim, transform: [{ scale: pulseAnim }] }}>
+          <NexaLogo size="sm" layout="horizontal" theme="light" />
+        </Animated.View>
+        <Text style={styles.thinkingText}>NEXA is thinking{dots}</Text>
+      </View>
+    );
   };
 
   return (
@@ -45,23 +100,61 @@ export default function IndexScreen() {
       <TouchableOpacity
         style={[styles.menuBtn, { top: Math.max(insets.top + 4, 20) }]}
         onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-        activeOpacity={0.72}
+        activeOpacity={0.65}
         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       >
         <Feather name="menu" size={22} color="#666666" />
       </TouchableOpacity>
 
-      <View style={styles.canvas}>
-        <View style={{ transform: [{ scale: logoScale }] }}>
-          <NexaLogo size="lg" layout="vertical" theme="light" animated={false} />
-        </View>
+      {showWelcome && !currentChat ? (
+        <ScrollView
+          ref={scrollRef}
+          style={styles.messages}
+          contentContainerStyle={styles.welcomeContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.welcomeContainer}>
+            <NexaLogo size="lg" layout="vertical" theme="light" />
+            <Text style={styles.welcomeHeadline}>
+              How can I help you today?
+            </Text>
+            <Text style={styles.welcomeSubhead}>
+              Ask me anything and I'll provide detailed, well-formatted answers.
+            </Text>
+          </View>
+        </ScrollView>
+      ) : (
+        <ScrollView
+          ref={scrollRef}
+          style={styles.messages}
+          contentContainerStyle={styles.messagesContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {currentChat && currentChat.messages.length === 0 ? (
+            <View style={styles.emptyState}>
+              <NexaLogo size="md" layout="vertical" theme="light" />
+              <Text style={styles.emptyTitle}>Start a conversation</Text>
+              <Text style={styles.emptyText}>Ask your first question below</Text>
+            </View>
+          ) : null}
 
-        <Text style={[styles.headline, { fontSize: headlineSize, lineHeight: headlineLineHeight }]}>How can I help you this evening?</Text>
+          {currentChat?.messages && currentChat.messages.map(message => (
+            <ChatMessageBubble key={message.id} message={message} />
+          ))}
 
-        <Text style={styles.subhead}>Ask anything and a new chat will be created automatically.</Text>
+          {aiLoading && (
+            <View style={styles.aiLoadingRow}>
+              <View style={styles.aiLoadingBubble}>
+                <BlurryLoader />
+              </View>
+            </View>
+          )}
+        </ScrollView>
+      )}
+
+      <View style={styles.inputWrap}>
+        <ChatInput onSend={handleSend} disabled={aiLoading} />
       </View>
-
-      <ChatInput onSend={handleSend} />
     </KeyboardAvoidingView>
   );
 }
@@ -81,27 +174,83 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(0,0,0,0.08)',
   },
-  canvas: {
+  messages: {
     flex: 1,
+  },
+  welcomeContent: {
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 28,
   },
-  headline: {
-    marginTop: 30,
-    fontWeight: '600',
+  welcomeContainer: {
+    alignItems: 'center',
+  },
+  welcomeHeadline: {
+    marginTop: 32,
+    fontSize: 36,
+    fontWeight: '700',
     color: '#1D1D1D',
     textAlign: 'center',
     letterSpacing: -0.5,
-    fontFamily: 'System',
-    maxWidth: 340,
+    maxWidth: 360,
   },
-  subhead: {
-    marginTop: 12,
-    fontSize: 13,
-    color: 'rgba(0,0,0,0.45)',
+  welcomeSubhead: {
+    marginTop: 16,
+    fontSize: 15,
+    color: 'rgba(0,0,0,0.52)',
     textAlign: 'center',
-    lineHeight: 19,
-    maxWidth: 300,
+    lineHeight: 22,
+    maxWidth: 320,
+    fontWeight: '400',
+  },
+  messagesContent: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 18,
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  emptyTitle: {
+    marginTop: 20,
+    color: '#1D1D1D',
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  emptyText: {
+    marginTop: 8,
+    color: 'rgba(0,0,0,0.55)',
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  inputWrap: {
+    paddingBottom: 4,
+  },
+  orbLoaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  thinkingText: {
+    color: 'rgba(0,0,0,0.55)',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  aiLoadingRow: {
+    alignItems: 'flex-start',
+    marginVertical: 8,
+    width: '100%',
+  },
+  aiLoadingBubble: {
+    maxWidth: '86%',
+    borderRadius: 22,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E5E1DA',
+    borderBottomLeftRadius: 4,
   },
 });

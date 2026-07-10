@@ -107,7 +107,7 @@ export default function ChatScreen() {
     return (
       <View style={styles.orbLoaderRow}>
         <Animated.View style={{ opacity: pulseAnim, transform: [{ scale: pulseAnim }] }}>
-          <NexaLogo size="sm" layout="horizontal" theme="light" animated={true} />
+          <NexaLogo size="sm" layout="horizontal" theme="light" />
         </Animated.View>
         <Text style={styles.thinkingText}>Thinking{dots}</Text>
       </View>
@@ -161,7 +161,7 @@ export default function ChatScreen() {
       <TouchableOpacity
         style={[styles.menuBtn, { top: Math.max(insets.top + 4, 20) }]}
         onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-        activeOpacity={0.7}
+        activeOpacity={0.65}
         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       >
         <Feather name="menu" size={22} color="#666666" />
@@ -174,7 +174,7 @@ export default function ChatScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.hero}>
-          <NexaLogo size="md" layout="vertical" theme="light" animated={false} />
+          <NexaLogo size="md" layout="vertical" theme="light" />
           <Text style={styles.chatTitle} numberOfLines={2}>{chat.title}</Text>
           <Text style={styles.chatSub}>Your conversation is ready.</Text>
         </View>
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     left: 18,
     zIndex: 10,
     padding: 8,
-    borderRadius: 10,
+    borderRadius: 12,
     backgroundColor: 'rgba(0,0,0,0.04)',
     borderWidth: 1,
     borderColor: 'rgba(0,0,0,0.08)',
@@ -229,22 +229,22 @@ const styles = StyleSheet.create({
   },
   hero: {
     alignItems: 'center',
-    marginBottom: 18,
+    marginBottom: 20,
   },
   chatTitle: {
-    marginTop: 18,
-    fontSize: 22,
+    marginTop: 20,
+    fontSize: 24,
     fontWeight: '700',
     color: '#1D1D1D',
     textAlign: 'center',
-    lineHeight: 30,
+    lineHeight: 32,
     letterSpacing: -0.4,
     maxWidth: '88%',
   },
   chatSub: {
-    marginTop: 8,
+    marginTop: 10,
     fontSize: 13,
-    color: 'rgba(0,0,0,0.38)',
+    color: 'rgba(0,0,0,0.42)',
     fontWeight: '400',
   },
   emptyState: {
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
   },
   aiLoadingRow: {
     alignItems: 'flex-start',
-    marginVertical: 6,
+    marginVertical: 8,
     width: '100%',
   },
   aiLoadingBubble: {

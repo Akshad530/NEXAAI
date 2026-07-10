@@ -6,6 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   Alert,
+  Image,
 } from 'react-native';
 import { DrawerContentComponentProps } from '@react-navigation/drawer';
 import { router, usePathname } from 'expo-router';
@@ -33,6 +34,7 @@ const C = {
   upgradeTxt: '#1D1D1D',
   upgradeBdr: '#E5E1DA',
   newChatBg: '#FFFFFF',
+  hoverBg: '#F5F2ED',
 };
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -88,8 +90,14 @@ export default function HistoryChatsDrawer(props: DrawerContentComponentProps) {
         <TouchableOpacity
           style={styles.chatRowBtn}
           onPress={() => handleSelectChat(item.id)}
-          activeOpacity={0.7}
+          activeOpacity={0.6}
         >
+          <Feather 
+            name="message-square" 
+            size={16} 
+            color={active ? '#D97757' : C.labelMuted} 
+            style={styles.chatIcon}
+          />
           <Text
             style={[styles.chatTitle, active ? styles.chatTitleActive : styles.chatTitleIdle]}
             numberOfLines={1}
@@ -100,10 +108,10 @@ export default function HistoryChatsDrawer(props: DrawerContentComponentProps) {
         <TouchableOpacity
           style={styles.ellipsisBtn}
           onPress={() => handleOpenMenu(item)}
-          activeOpacity={0.7}
+          activeOpacity={0.6}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Feather name="more-horizontal" size={14} color={active ? C.label : C.labelMuted} />
+          <Feather name="more-horizontal" size={16} color={active ? C.label : C.labelMuted} />
         </TouchableOpacity>
       </View>
     );
@@ -114,14 +122,16 @@ export default function HistoryChatsDrawer(props: DrawerContentComponentProps) {
   return (
     <View style={styles.root}>
       <View style={styles.header}>
-        <NexaLogo size="lg" layout="vertical" theme="light" animated={false} />
+        <View style={styles.logoContainer}>
+          <NexaLogo size="sm" layout="horizontal" theme="light" />
+        </View>
         <TouchableOpacity
           onPress={() => props.navigation.closeDrawer()}
           style={styles.closeBtn}
-          activeOpacity={0.75}
+          activeOpacity={0.65}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Feather name="chevron-left" size={20} color={C.label} />
+          <Feather name="chevron-left" size={22} color={C.label} />
         </TouchableOpacity>
       </View>
 
@@ -130,28 +140,30 @@ export default function HistoryChatsDrawer(props: DrawerContentComponentProps) {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <TouchableOpacity style={styles.newChatRow} onPress={handleNewChat} activeOpacity={0.8}>
-          <Feather name="edit-3" size={16} color={C.label} style={styles.rowIcon} />
+        <TouchableOpacity style={styles.newChatRow} onPress={handleNewChat} activeOpacity={0.75}>
+          <Feather name="edit-3" size={18} color={C.label} style={styles.rowIcon} />
           <Text style={styles.newChatText}>New chat</Text>
         </TouchableOpacity>
 
-        {[
-          { icon: 'search', label: 'Search chats' },
-          { icon: 'book-open', label: 'Library' },
-          { icon: 'folder', label: 'Projects', badge: '+' },
-          { icon: 'grid', label: 'Apps' },
-          { icon: 'more-horizontal', label: 'More' },
-        ].map(({ icon, label, badge }) => (
-          <TouchableOpacity key={label} style={styles.navRow} activeOpacity={0.72}>
-            <Feather name={icon as any} size={17} color={C.icon} style={styles.rowIcon} />
-            <Text style={styles.navText}>{label}</Text>
-            {badge && (
-              <View style={styles.badgeWrap}>
-                <Feather name="plus" size={13} color={C.labelMuted} />
-              </View>
-            )}
-          </TouchableOpacity>
-        ))}
+        <View style={styles.navSection}>
+          {[
+            { icon: 'search', label: 'Search chats' },
+            { icon: 'book-open', label: 'Library' },
+            { icon: 'folder', label: 'Projects', badge: '+' },
+            { icon: 'grid', label: 'Apps' },
+            { icon: 'settings', label: 'Settings' },
+          ].map(({ icon, label, badge }) => (
+            <TouchableOpacity key={label} style={styles.navRow} activeOpacity={0.65}>
+              <Feather name={icon as any} size={18} color={C.icon} style={styles.rowIcon} />
+              <Text style={styles.navText}>{label}</Text>
+              {badge && (
+                <View style={styles.badgeWrap}>
+                  <Feather name="plus" size={14} color={C.labelMuted} />
+                </View>
+              )}
+            </TouchableOpacity>
+          ))}
+        </View>
 
         <View style={styles.divider} />
 
@@ -178,7 +190,7 @@ export default function HistoryChatsDrawer(props: DrawerContentComponentProps) {
 
         {chats.length === 0 && (
           <View style={styles.emptyWrap}>
-            <Feather name="message-square" size={20} color={C.labelMuted} />
+            <Feather name="message-square" size={24} color={C.labelMuted} />
             <Text style={styles.emptyText}>No conversations yet</Text>
             <Text style={styles.emptySubtext}>Start a new chat to see it here.</Text>
           </View>
@@ -186,6 +198,7 @@ export default function HistoryChatsDrawer(props: DrawerContentComponentProps) {
       </ScrollView>
 
       <View style={styles.footer}>
+        <View style={styles.footerDivider} />
         <View style={styles.footerRow}>
           <View style={styles.avatar}>
             <Text style={styles.avatarTxt}>NA</Text>
@@ -193,11 +206,11 @@ export default function HistoryChatsDrawer(props: DrawerContentComponentProps) {
 
           <View style={styles.nameBlock}>
             <Text style={styles.name}>NEXA AI</Text>
-            <Text style={styles.tier}>Pro</Text>
+            <Text style={styles.tier}>Pro Plan</Text>
           </View>
 
-          <TouchableOpacity style={styles.upgradeBtn} activeOpacity={0.8}>
-            <Text style={styles.upgradeTxt}>Upgrade</Text>
+          <TouchableOpacity style={styles.upgradeBtn} activeOpacity={0.75}>
+            <Feather name="arrow-up-right" size={14} color={C.upgradeTxt} />
           </TouchableOpacity>
         </View>
       </View>
@@ -215,15 +228,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 18,
-    paddingBottom: 18,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
     borderColor: C.border,
     backgroundColor: C.bg,
   },
+  logoContainer: {
+    flex: 1,
+  },
   closeBtn: {
-    width: 34,
-    height: 34,
+    width: 38,
+    height: 38,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,
@@ -232,34 +248,37 @@ const styles = StyleSheet.create({
     borderColor: C.borderStrong,
   },
   scroll: { flex: 1 },
-  scrollContent: { paddingHorizontal: 10, paddingVertical: 10, paddingBottom: 20 },
+  scrollContent: { paddingHorizontal: 10, paddingVertical: 12, paddingBottom: 20 },
   newChatRow: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: C.newChatBg,
     borderRadius: 12,
-    paddingVertical: 11,
-    paddingHorizontal: 12,
-    marginBottom: 4,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    marginBottom: 8,
     borderWidth: 1,
     borderColor: C.border,
   },
   newChatText: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
     color: C.label,
-    letterSpacing: 0.1,
+    letterSpacing: 0.2,
+  },
+  navSection: {
+    marginBottom: 4,
   },
   navRow: {
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 10,
-    paddingVertical: 10,
+    paddingVertical: 11,
     paddingHorizontal: 12,
-    marginBottom: 2,
+    marginBottom: 3,
   },
   navText: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '500',
     color: C.label,
     flex: 1,
@@ -267,89 +286,101 @@ const styles = StyleSheet.create({
   rowIcon: { marginRight: 12 },
   badgeWrap: { padding: 2 },
   divider: {
-    height: StyleSheet.hairlineWidth,
+    height: 1,
     backgroundColor: C.border,
-    marginVertical: 12,
+    marginVertical: 14,
     marginHorizontal: 4,
   },
   sectionLabel: {
     fontSize: 11,
     fontWeight: '700',
     color: C.labelMuted,
-    letterSpacing: 0.6,
+    letterSpacing: 0.8,
     textTransform: 'uppercase',
-    paddingHorizontal: 8,
-    paddingBottom: 6,
-    paddingTop: 2,
+    paddingHorizontal: 10,
+    paddingBottom: 8,
+    paddingTop: 6,
   },
   chatRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 8,
-    marginBottom: 2,
-    height: 38,
+    borderRadius: 10,
+    marginBottom: 3,
+    height: 42,
     paddingRight: 4,
   },
   chatRowActive: { backgroundColor: C.rowActive },
   chatRowBtn: {
     flex: 1,
-    justifyContent: 'center',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
     paddingLeft: 8,
     height: '100%',
   },
-  chatTitle: { fontSize: 13.5, fontWeight: '500' },
-  chatTitleActive: { color: C.label },
+  chatIcon: {
+    marginRight: 10,
+  },
+  chatTitle: { fontSize: 14, fontWeight: '500' },
+  chatTitleActive: { color: C.label, fontWeight: '600' },
   chatTitleIdle: { color: '#999999' },
   ellipsisBtn: { padding: 6 },
   emptyWrap: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 36,
+    paddingVertical: 40,
     paddingHorizontal: 20,
-    gap: 6,
+    gap: 8,
   },
   emptyText: {
-    fontSize: 13.5,
+    fontSize: 14,
     fontWeight: '600',
     color: C.labelMuted,
     marginTop: 4,
   },
   emptySubtext: {
-    fontSize: 12,
+    fontSize: 13,
     color: C.labelMuted,
     opacity: 0.7,
     textAlign: 'center',
   },
   footer: {
-    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopWidth: 1,
     borderColor: C.border,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
     backgroundColor: C.bg,
+  },
+  footerDivider: {
+    height: 1,
+    backgroundColor: C.border,
   },
   footerRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
   },
   avatar: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: C.avatarBg,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  avatarTxt: { color: '#fff', fontSize: 12, fontWeight: '700' },
-  nameBlock: { flex: 1, marginLeft: 10, marginRight: 8 },
-  name: { fontSize: 13.5, fontWeight: '600', color: C.label },
-  tier: { fontSize: 11, color: C.labelMuted, marginTop: 1 },
+  avatarTxt: { color: '#fff', fontSize: 13, fontWeight: '700' },
+  nameBlock: { flex: 1, marginLeft: 12, marginRight: 10 },
+  name: { fontSize: 14, fontWeight: '700', color: C.label },
+  tier: { fontSize: 12, color: C.labelMuted, marginTop: 2, fontWeight: '500' },
   upgradeBtn: {
+    width: 36,
+    height: 36,
     borderWidth: 1,
     borderColor: C.upgradeBdr,
-    borderRadius: 18,
-    paddingVertical: 5,
-    paddingHorizontal: 13,
+    borderRadius: 10,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
     backgroundColor: C.upgradeBtn,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  upgradeTxt: { fontSize: 12, fontWeight: '600', color: C.upgradeTxt },
 });
