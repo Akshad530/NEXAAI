@@ -22,7 +22,7 @@ export default function NexaLogo({
 
   const logoImg = (
     <Image 
-      source={require('@assets/logo.jpg')} 
+      source={require('../../../assets/logo.jpg')} 
       style={{ width: imgSize, height: imgSize }}
       resizeMode="contain"
     />

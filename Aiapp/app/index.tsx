@@ -85,7 +85,7 @@ export default function IndexScreen() {
       <View style={styles.orbLoaderRow}>
         <Animated.View style={{ opacity: pulseAnim, transform: [{ scale: pulseAnim }] }}>
           <Image
-            source={require('@assets/logo.jpg')}
+            source={require('../assets/logo.jpg')}
             style={styles.loaderLogo}
             resizeMode="contain"
           />
@@ -114,7 +114,7 @@ export default function IndexScreen() {
 
         <View style={styles.headerCenter}>
           <Image
-            source={require('@assets/logo.jpg')}
+            source={require('../assets/logo.jpg')}
             style={styles.headerLogo}
             resizeMode="contain"
           />
@@ -139,7 +139,7 @@ export default function IndexScreen() {
         >
           <View style={styles.welcomeContainer}>
             <Image
-              source={require('@assets/logo.jpg')}
+              source={require('../assets/logo.jpg')}
               style={styles.welcomeLogo}
               resizeMode="contain"
             />
@@ -158,7 +158,7 @@ export default function IndexScreen() {
           {currentChat && currentChat.messages.length === 0 ? (
             <View style={styles.emptyState}>
               <Image
-                source={require('@assets/logo.jpg')}
+                source={require('../assets/logo.jpg')}
                 style={styles.emptyLogo}
                 resizeMode="contain"
               />

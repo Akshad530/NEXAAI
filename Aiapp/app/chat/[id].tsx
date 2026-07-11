@@ -109,7 +109,7 @@ export default function ChatScreen() {
       <View style={styles.orbLoaderRow}>
         <Animated.View style={{ opacity: pulseAnim, transform: [{ scale: pulseAnim }] }}>
           <Image
-            source={require('@assets/logo.jpg')}
+            source={require('../../assets/logo.jpg')}
             style={styles.loaderLogo}
             resizeMode="contain"
           />
@@ -124,7 +124,7 @@ export default function ChatScreen() {
       <View style={styles.loadingContainer}>
         <Animated.View>
           <Image
-            source={require('@assets/logo.jpg')}
+            source={require('../../assets/logo.jpg')}
             style={styles.loadingLogo}
             resizeMode="contain"
           />
@@ -183,7 +183,7 @@ export default function ChatScreen() {
         {chat.messages.length === 0 && (
           <View style={styles.hero}>
             <Image
-              source={require('@assets/logo.jpg')}
+              source={require('../../assets/logo.jpg')}
               style={styles.heroLogo}
               resizeMode="contain"
             />
