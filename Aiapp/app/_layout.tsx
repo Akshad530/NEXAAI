@@ -9,9 +9,9 @@ const appTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: '#D97757',
-    background: '#F9F6F2',
-    card: '#F9F6F2',
+    primary: '#1D1D1D',
+    background: '#F5F5F5',
+    card: '#FFFFFF',
   },
 };
 
@@ -26,10 +26,10 @@ export default function RootLayout() {
               headerShown: false,
               overlayColor: 'rgba(0,0,0,0.15)',
               drawerStyle: {
-                backgroundColor: '#F9F6F2',
+                backgroundColor: '#F5F5F5',
                 width: 298,
                 borderRightWidth: 1,
-                borderRightColor: '#E5E1DA',
+                borderRightColor: '#E8E8E8',
               },
             }}
           >

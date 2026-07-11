@@ -90,7 +90,7 @@ export default function IndexScreen() {
             resizeMode="contain"
           />
         </Animated.View>
-        <Text style={styles.thinkingText}>NEXA is thinking{dots}</Text>
+        <Text style={styles.thinkingText}>Thinking{dots}</Text>
       </View>
     );
   };
@@ -109,7 +109,7 @@ export default function IndexScreen() {
           activeOpacity={0.65}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Feather name="menu" size={24} color="#1D1D1D" />
+          <Feather name="menu" size={22} color="#666666" />
         </TouchableOpacity>
 
         <View style={styles.headerCenter}>
@@ -118,16 +118,15 @@ export default function IndexScreen() {
             style={styles.headerLogo}
             resizeMode="contain"
           />
-          <Text style={styles.headerTitle}>NEXA AI</Text>
+          <Text style={styles.headerTitle}>NEXA AI 4.5</Text>
         </View>
 
         <TouchableOpacity
-          style={styles.newChatBtn}
-          onPress={startNewChat}
+          style={styles.notificationBtn}
           activeOpacity={0.7}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Feather name="plus" size={20} color="#1D1D1D" />
+          <Feather name="bell" size={20} color="#666666" />
         </TouchableOpacity>
       </View>
 
@@ -145,10 +144,7 @@ export default function IndexScreen() {
               resizeMode="contain"
             />
             <Text style={styles.welcomeHeadline}>
-              How can I help you today?
-            </Text>
-            <Text style={styles.welcomeSubhead}>
-              Ask me anything and I'll provide detailed, well-formatted answers.
+              How can I help you this evening?
             </Text>
           </View>
         </ScrollView>
@@ -195,7 +191,7 @@ export default function IndexScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9F6F2',
+    backgroundColor: '#F5F5F5',
   },
   header: {
     flexDirection: 'row',
@@ -205,12 +201,12 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E1DA',
+    borderBottomColor: '#E8E8E8',
   },
   menuBtn: {
     padding: 8,
     borderRadius: 10,
-    backgroundColor: 'rgba(0,0,0,0.05)',
+    backgroundColor: 'transparent',
   },
   headerCenter: {
     flexDirection: 'row',
@@ -223,14 +219,14 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 16,
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#1D1D1D',
     letterSpacing: -0.5,
   },
-  newChatBtn: {
+  notificationBtn: {
     padding: 8,
     borderRadius: 10,
-    backgroundColor: 'rgba(0,0,0,0.05)',
+    backgroundColor: 'transparent',
   },
   messages: {
     flex: 1,
@@ -251,19 +247,12 @@ const styles = StyleSheet.create({
   },
   welcomeHeadline: {
     fontSize: 32,
-    fontWeight: '700',
+    fontWeight: '600',
     color: '#1D1D1D',
     textAlign: 'center',
     letterSpacing: -0.5,
     marginBottom: 12,
-  },
-  welcomeSubhead: {
-    fontSize: 15,
-    color: 'rgba(0,0,0,0.52)',
-    textAlign: 'center',
-    lineHeight: 22,
-    maxWidth: 320,
-    fontWeight: '400',
+    lineHeight: 40,
   },
   messagesContent: {
     paddingHorizontal: 16,
@@ -314,12 +303,12 @@ const styles = StyleSheet.create({
   },
   aiLoadingBubble: {
     maxWidth: '86%',
-    borderRadius: 22,
+    borderRadius: 20,
     paddingVertical: 12,
     paddingHorizontal: 14,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E5E1DA',
-    borderBottomLeftRadius: 4,
+    borderColor: '#E8E8E8',
+    borderBottomLeftRadius: 6,
   },
 });

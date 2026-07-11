@@ -75,7 +75,7 @@ export default function HistoryChatsDrawer({ navigation }: Props) {
               onPress={() => handleSelectChat(chat.id)}
               activeOpacity={0.65}
             >
-              <Feather name="message-circle" size={16} color="#D97757" />
+              <Feather name="message-circle" size={16} color="#1D1D1D" />
               <Text style={styles.chatTitle} numberOfLines={1}>
                 {chat.title}
               </Text>
@@ -98,7 +98,7 @@ export default function HistoryChatsDrawer({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F5F5F5',
   },
   header: {
     flexDirection: 'row',
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: '#E5E1DA',
+    backgroundColor: '#E8E8E8',
     marginHorizontal: 12,
   },
   newChatBtn: {
@@ -132,11 +132,11 @@ const styles = StyleSheet.create({
     marginVertical: 12,
     paddingVertical: 12,
     paddingHorizontal: 16,
-    backgroundColor: '#D97757',
+    backgroundColor: '#1D1D1D',
     borderRadius: 12,
-    shadowColor: '#D97757',
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 3,
   },
@@ -176,9 +176,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     marginBottom: 6,
     borderRadius: 10,
-    backgroundColor: '#F9F6F2',
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: 'rgba(217, 119, 87, 0.08)',
+    borderColor: '#E8E8E8',
   },
   chatTitle: {
     flex: 1,
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     borderTopWidth: 1,
-    borderTopColor: '#E5E1DA',
+    borderTopColor: '#E8E8E8',
     paddingHorizontal: 12,
     paddingVertical: 12,
   },
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderRadius: 10,
-    backgroundColor: '#F9F6F2',
+    backgroundColor: '#F5F5F5',
   },
   footerText: {
     fontSize: 14,

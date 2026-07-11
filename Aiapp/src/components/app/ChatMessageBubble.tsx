@@ -40,8 +40,8 @@ export default function ChatMessageBubble({ message }: Props) {
 
           return (
             <View key={`${lineIndex}-${body}`} style={[styles.lineContainer, (isBullet || isNumbered) && styles.listItem]}>
-              {isBullet && <Text style={styles.bullet}>•</Text>}
-              {isNumbered && <Text style={styles.bullet}>{line.match(/^\d+/)?.[0]}.</Text>}
+              {isBullet && <Text style={isUser ? styles.userBullet : styles.assistantBullet}>•</Text>}
+              {isNumbered && <Text style={isUser ? styles.userBullet : styles.assistantBullet}>{line.match(/^\d+/)?.[0]}.</Text>}
               <Text style={isUser ? styles.userText : styles.assistantText}>
                 {renderInline(body)}
                 {lineIndex < lines.length - 1 ? '\n' : ''}
@@ -56,7 +56,7 @@ export default function ChatMessageBubble({ message }: Props) {
 
 const styles = StyleSheet.create({
   row: {
-    marginVertical: 12,
+    marginVertical: 10,
     width: '100%',
     paddingHorizontal: 0,
   },
@@ -75,23 +75,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   userBubble: {
-    backgroundColor: '#D97757',
+    backgroundColor: '#1D1D1D',
     borderBottomRightRadius: 4,
-    shadowColor: '#D97757',
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 2,
   },
   assistantBubble: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E5E1DA',
+    borderColor: '#E8E8E8',
     borderBottomLeftRadius: 4,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3,
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
     elevation: 1,
   },
   lineContainer: {
@@ -127,8 +127,15 @@ const styles = StyleSheet.create({
     lineHeight: 23,
     fontWeight: '700',
   },
-  bullet: {
+  userBullet: {
     color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '600',
+    marginRight: 8,
+    marginTop: 2,
+  },
+  assistantBullet: {
+    color: '#1D1D1D',
     fontSize: 15,
     fontWeight: '600',
     marginRight: 8,

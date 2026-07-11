@@ -9,6 +9,7 @@ import {
   ScrollView,
   Animated,
   Easing,
+  Image,
 } from 'react-native';
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 import { DrawerActions } from '@react-navigation/native';
@@ -107,37 +108,27 @@ export default function ChatScreen() {
     return (
       <View style={styles.orbLoaderRow}>
         <Animated.View style={{ opacity: pulseAnim, transform: [{ scale: pulseAnim }] }}>
-          <NexaLogo size="sm" layout="horizontal" theme="light" />
+          <Image
+            source={require('@assets/logo.jpg')}
+            style={styles.loaderLogo}
+            resizeMode="contain"
+          />
         </Animated.View>
         <Text style={styles.thinkingText}>Thinking{dots}</Text>
       </View>
     );
   };
 
-  const SpinningLoader = () => {
-    const spin = useRef(new Animated.Value(0)).current;
-
-    useEffect(() => {
-      const loop = Animated.loop(
-        Animated.timing(spin, { toValue: 1, duration: 900, easing: Easing.linear, useNativeDriver: true })
-      );
-      loop.start();
-      return () => loop.stop();
-    }, [spin]);
-
-    const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
-
-    return (
-      <Animated.View style={{ transform: [{ rotate }] }}>
-        <Feather name="loader" size={32} color="#D97757" />
-      </Animated.View>
-    );
-  };
-
   if (initialLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <SpinningLoader />
+        <Animated.View>
+          <Image
+            source={require('@assets/logo.jpg')}
+            style={styles.loadingLogo}
+            resizeMode="contain"
+          />
+        </Animated.View>
         <Text style={styles.loadingText}>Loading conversation...</Text>
       </View>
     );
@@ -158,14 +149,29 @@ export default function ChatScreen() {
       style={styles.container}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
-      <TouchableOpacity
-        style={[styles.menuBtn, { top: Math.max(insets.top + 4, 20) }]}
-        onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-        activeOpacity={0.65}
-        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-      >
-        <Feather name="menu" size={22} color="#666666" />
-      </TouchableOpacity>
+      {/* Header Bar */}
+      <View style={[styles.headerBar, { paddingTop: Math.max(insets.top, 8) }]}>
+        <TouchableOpacity
+          style={styles.menuBtn}
+          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+          activeOpacity={0.65}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Feather name="menu" size={20} color="#666666" />
+        </TouchableOpacity>
+
+        <View style={styles.headerCenter}>
+          <Text style={styles.modelName}>NEXA AI 4.5</Text>
+        </View>
+
+        <TouchableOpacity
+          style={styles.notificationBtn}
+          activeOpacity={0.65}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Feather name="bell" size={20} color="#666666" />
+        </TouchableOpacity>
+      </View>
 
       <ScrollView
         ref={scrollRef}
@@ -173,21 +179,24 @@ export default function ChatScreen() {
         contentContainerStyle={styles.messagesContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.hero}>
-          <NexaLogo size="md" layout="vertical" theme="light" />
-          <Text style={styles.chatTitle} numberOfLines={2}>{chat.title}</Text>
-          <Text style={styles.chatSub}>Your conversation is ready.</Text>
-        </View>
-
-        {chat.messages.length === 0 ? (
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyTitle}>Ask your first question</Text>
-            <Text style={styles.emptyText}>NEXA AI will answer here with clear, formatted text.</Text>
+        {/* Welcome Hero Section */}
+        {chat.messages.length === 0 && (
+          <View style={styles.hero}>
+            <Image
+              source={require('@assets/logo.jpg')}
+              style={styles.heroLogo}
+              resizeMode="contain"
+            />
+            <Text style={styles.chatTitle}>How can I help you this evening?</Text>
           </View>
-        ) : (
-          chat.messages.map(message => <ChatMessageBubble key={message.id} message={message} />)
         )}
 
+        {/* Messages */}
+        {chat.messages.length > 0 && chat.messages.map(message => (
+          <ChatMessageBubble key={message.id} message={message} />
+        ))}
+
+        {/* AI Loading State */}
         {aiLoading && (
           <View style={styles.aiLoadingRow}>
             <View style={styles.aiLoadingBubble}>
@@ -197,6 +206,7 @@ export default function ChatScreen() {
         )}
       </ScrollView>
 
+      {/* Input Area */}
       <View style={styles.inputWrap}>
         <ChatInput onSend={handleSend} disabled={aiLoading} />
       </View>
@@ -207,65 +217,71 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9F6F2',
+    backgroundColor: '#F5F5F5',
+  },
+  headerBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E8E8E8',
   },
   menuBtn: {
-    position: 'absolute',
-    left: 18,
-    zIndex: 10,
     padding: 8,
-    borderRadius: 12,
-    backgroundColor: 'rgba(0,0,0,0.04)',
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.08)',
+    borderRadius: 10,
+    backgroundColor: 'transparent',
+  },
+  headerCenter: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  modelName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1D1D1D',
+    letterSpacing: -0.3,
+  },
+  notificationBtn: {
+    padding: 8,
+    borderRadius: 10,
+    backgroundColor: 'transparent',
   },
   messages: {
     flex: 1,
   },
   messagesContent: {
     paddingHorizontal: 16,
-    paddingTop: 84,
-    paddingBottom: 18,
+    paddingTop: 20,
+    paddingBottom: 20,
   },
   hero: {
     alignItems: 'center',
+    marginBottom: 32,
+    marginTop: 40,
+  },
+  heroLogo: {
+    width: 60,
+    height: 60,
     marginBottom: 20,
   },
   chatTitle: {
-    marginTop: 20,
-    fontSize: 24,
-    fontWeight: '700',
+    fontSize: 28,
+    fontWeight: '600',
     color: '#1D1D1D',
     textAlign: 'center',
-    lineHeight: 32,
-    letterSpacing: -0.4,
-    maxWidth: '88%',
-  },
-  chatSub: {
-    marginTop: 10,
-    fontSize: 13,
-    color: 'rgba(0,0,0,0.42)',
-    fontWeight: '400',
-  },
-  emptyState: {
-    paddingVertical: 28,
-    alignItems: 'center',
-  },
-  emptyTitle: {
-    color: '#1D1D1D',
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 6,
-  },
-  emptyText: {
-    color: 'rgba(0,0,0,0.55)',
-    fontSize: 13,
-    textAlign: 'center',
-    maxWidth: 260,
-    lineHeight: 20,
+    lineHeight: 36,
+    letterSpacing: -0.5,
+    maxWidth: '90%',
   },
   inputWrap: {
     paddingBottom: 4,
+  },
+  loaderLogo: {
+    width: 24,
+    height: 24,
   },
   orbLoaderRow: {
     flexDirection: 'row',
@@ -284,19 +300,24 @@ const styles = StyleSheet.create({
   },
   aiLoadingBubble: {
     maxWidth: '86%',
-    borderRadius: 22,
+    borderRadius: 20,
     paddingVertical: 12,
     paddingHorizontal: 14,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E5E1DA',
-    borderBottomLeftRadius: 8,
+    borderColor: '#E8E8E8',
+    borderBottomLeftRadius: 6,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F9F6F2',
+    backgroundColor: '#F5F5F5',
+  },
+  loadingLogo: {
+    width: 50,
+    height: 50,
+    marginBottom: 16,
   },
   loadingText: {
     marginTop: 12,
@@ -307,7 +328,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F9F6F2',
+    backgroundColor: '#F5F5F5',
     gap: 12,
   },
   errorText: {

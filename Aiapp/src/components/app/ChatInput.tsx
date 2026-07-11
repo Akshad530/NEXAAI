@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Text,
   Alert,
+  Platform,
 } from 'react-native';
 import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -16,7 +17,7 @@ interface ChatInputProps {
   disabled?: boolean;
 }
 
-export default function ChatInput({ onSend, placeholder = 'Ask NEXA AI anything...', disabled = false }: ChatInputProps) {
+export default function ChatInput({ onSend, placeholder = 'Chat with NEXA AI', disabled = false }: ChatInputProps) {
   const [text, setText] = useState('');
   const [thinking, setThinking] = useState(false);
   const [search, setSearch] = useState(false);
@@ -48,7 +49,7 @@ export default function ChatInput({ onSend, placeholder = 'Ask NEXA AI anything.
         <TextInput
           style={styles.textInput}
           placeholder={disabled ? 'Waiting for response…' : placeholder}
-          placeholderTextColor="#BBBBBB"
+          placeholderTextColor="#CCCCCC"
           value={text}
           onChangeText={setText}
           multiline
@@ -96,21 +97,27 @@ export default function ChatInput({ onSend, placeholder = 'Ask NEXA AI anything.
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity
-            style={[
-              styles.sendButton,
-              text.trim().length > 0 && !disabled && styles.sendButtonActive,
-            ]}
-            onPress={handleSend}
-            disabled={text.trim().length === 0 || disabled}
-            activeOpacity={0.7}
-          >
-            {text.trim().length > 0 && !disabled ? (
-              <Feather name="arrow-up" size={16} color="#FFFFFF" />
-            ) : (
-              <Feather name="star" size={15} color="#CCCCCC" />
-            )}
-          </TouchableOpacity>
+          <View style={styles.rightActions}>
+            <TouchableOpacity style={styles.iconButton} activeOpacity={0.7}>
+              <Feather name="mic" size={16} color="#999999" />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.sendButton,
+                text.trim().length > 0 && !disabled && styles.sendButtonActive,
+              ]}
+              onPress={handleSend}
+              disabled={text.trim().length === 0 || disabled}
+              activeOpacity={0.7}
+            >
+              {text.trim().length > 0 && !disabled ? (
+                <Feather name="arrow-up" size={16} color="#FFFFFF" />
+              ) : (
+                <Feather name="star" size={15} color="#CCCCCC" />
+              )}
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </View>
@@ -119,9 +126,9 @@ export default function ChatInput({ onSend, placeholder = 'Ask NEXA AI anything.
 
 const styles = StyleSheet.create({
   bottomBar: {
-    backgroundColor: '#F9F6F2',
+    backgroundColor: '#F5F5F5',
     borderTopWidth: 1,
-    borderColor: '#E5E1DA',
+    borderColor: '#E8E8E8',
     width: '100%',
     paddingHorizontal: 16,
     paddingTop: 12,
@@ -130,7 +137,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 24,
     borderWidth: 1.5,
-    borderColor: '#E5E1DA',
+    borderColor: '#E8E8E8',
     paddingTop: 14,
     paddingBottom: 10,
     paddingHorizontal: 16,
@@ -138,8 +145,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
+    shadowOpacity: 0.06,
+    shadowRadius: 3,
     elevation: 2,
   },
   textInput: {
@@ -164,23 +171,38 @@ const styles = StyleSheet.create({
     gap: 8,
     flexShrink: 1,
   },
+  rightActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   plusButton: {
     width: 28,
     height: 28,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#E5E1DA',
+    borderColor: '#E8E8E8',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F9F6F2',
+    backgroundColor: '#F5F5F5',
+  },
+  iconButton: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#E8E8E8',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F5F5F5',
   },
   pillButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F9F6F2',
+    backgroundColor: '#F5F5F5',
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#E5E1DA',
+    borderColor: '#E8E8E8',
     paddingVertical: 5,
     paddingHorizontal: 9,
   },
@@ -206,16 +228,16 @@ const styles = StyleSheet.create({
     borderRadius: 17,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F9F6F2',
+    backgroundColor: '#F5F5F5',
     borderWidth: 1,
-    borderColor: '#E5E1DA',
+    borderColor: '#E8E8E8',
   },
   sendButtonActive: {
-    backgroundColor: '#D97757',
-    borderColor: '#D97757',
-    shadowColor: '#D97757',
+    backgroundColor: '#1D1D1D',
+    borderColor: '#1D1D1D',
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.35,
+    shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 4,
   },
