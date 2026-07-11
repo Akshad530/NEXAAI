@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import SunburstIcon from './SunburstIcon';
 
 interface NexaLogoProps {
   size?: 'sm' | 'md' | 'lg';
@@ -15,17 +16,13 @@ export default function NexaLogo({
   showText = true,
 }: NexaLogoProps) {
   const isHorizontal = layout === 'horizontal';
-  
+
   const imgSize = size === 'sm' ? 24 : size === 'md' ? 60 : 100;
   const fontSize = size === 'sm' ? 12 : size === 'md' ? 20 : 28;
   const spacing = size === 'sm' ? 6 : size === 'md' ? 10 : 16;
 
   const logoImg = (
-    <Image 
-      source={require('../../../assets/logo.jpg')} 
-      style={{ width: imgSize, height: imgSize }}
-      resizeMode="contain"
-    />
+    <SunburstIcon size={imgSize} color={theme === 'dark' ? '#FFFFFF' : '#D97757'} />
   );
 
   if (isHorizontal) {
@@ -58,23 +55,23 @@ export default function NexaLogo({
 }
 
 const styles = StyleSheet.create({
-  hRow: { 
-    flexDirection: 'row', 
+  hRow: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
-  hText: { 
-    flexDirection: 'row', 
+  hText: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
-  vCol: { 
+  vCol: {
     alignItems: 'center',
   },
-  vText: { 
-    flexDirection: 'row', 
+  vText: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
-  nexaText: { 
-    fontWeight: '700', 
+  nexaText: {
+    fontWeight: '700',
     letterSpacing: -0.5,
     fontFamily: 'System',
   },

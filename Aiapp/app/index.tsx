@@ -9,7 +9,6 @@ import {
   ScrollView,
   Animated,
   Easing,
-  Image,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from 'expo-router';
@@ -17,8 +16,17 @@ import { DrawerActions } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import ChatInput from '@/components/app/ChatInput';
 import NexaLogo from '@/components/app/NexaLogo';
+import SunburstIcon from '@/components/app/SunburstIcon';
 import ChatMessageBubble from '@/components/app/ChatMessageBubble';
 import { useChat } from '@/state/ChatProvider';
+
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 5) return 'How can I help you tonight?';
+  if (hour < 12) return 'How can I help you this morning?';
+  if (hour < 17) return 'How can I help you this afternoon?';
+  return 'How can I help you this evening?';
+}
 
 export default function IndexScreen() {
   const insets = useSafeAreaInsets();
@@ -84,11 +92,7 @@ export default function IndexScreen() {
     return (
       <View style={styles.orbLoaderRow}>
         <Animated.View style={{ opacity: pulseAnim, transform: [{ scale: pulseAnim }] }}>
-          <Image
-            source={require('../assets/logo.jpg')}
-            style={styles.loaderLogo}
-            resizeMode="contain"
-          />
+          <SunburstIcon size={24} />
         </Animated.View>
         <Text style={styles.thinkingText}>Thinking{dots}</Text>
       </View>
@@ -113,11 +117,7 @@ export default function IndexScreen() {
         </TouchableOpacity>
 
         <View style={styles.headerCenter}>
-          <Image
-            source={require('../assets/logo.jpg')}
-            style={styles.headerLogo}
-            resizeMode="contain"
-          />
+          <SunburstIcon size={24} />
           <Text style={styles.headerTitle}>NEXA AI 4.5</Text>
         </View>
 
@@ -138,13 +138,9 @@ export default function IndexScreen() {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.welcomeContainer}>
-            <Image
-              source={require('../assets/logo.jpg')}
-              style={styles.welcomeLogo}
-              resizeMode="contain"
-            />
+            <SunburstIcon size={72} />
             <Text style={styles.welcomeHeadline}>
-              How can I help you this evening?
+              {getGreeting()}
             </Text>
           </View>
         </ScrollView>
@@ -157,11 +153,7 @@ export default function IndexScreen() {
         >
           {currentChat && currentChat.messages.length === 0 ? (
             <View style={styles.emptyState}>
-              <Image
-                source={require('../assets/logo.jpg')}
-                style={styles.emptyLogo}
-                resizeMode="contain"
-              />
+              <SunburstIcon size={48} />
               <Text style={styles.emptyTitle}>Start a conversation</Text>
               <Text style={styles.emptyText}>Ask your first question below</Text>
             </View>
@@ -191,7 +183,7 @@ export default function IndexScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#F9F6F2',
   },
   header: {
     flexDirection: 'row',
@@ -199,9 +191,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingBottom: 12,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F9F6F2',
     borderBottomWidth: 1,
-    borderBottomColor: '#E8E8E8',
+    borderBottomColor: '#EDE7DD',
   },
   menuBtn: {
     padding: 8,
@@ -240,19 +232,16 @@ const styles = StyleSheet.create({
   welcomeContainer: {
     alignItems: 'center',
   },
-  welcomeLogo: {
-    width: 80,
-    height: 80,
-    marginBottom: 24,
-  },
   welcomeHeadline: {
-    fontSize: 32,
-    fontWeight: '600',
+    fontSize: 28,
+    fontWeight: '500',
+    fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
     color: '#1D1D1D',
     textAlign: 'center',
-    letterSpacing: -0.5,
+    letterSpacing: -0.3,
+    marginTop: 20,
     marginBottom: 12,
-    lineHeight: 40,
+    lineHeight: 36,
   },
   messagesContent: {
     paddingHorizontal: 16,

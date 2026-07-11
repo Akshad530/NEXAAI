@@ -9,7 +9,6 @@ import {
   ScrollView,
   Animated,
   Easing,
-  Image,
 } from 'react-native';
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 import { DrawerActions } from '@react-navigation/native';
@@ -18,6 +17,7 @@ import { Feather } from '@expo/vector-icons';
 import ChatInput from '@/components/app/ChatInput';
 import NexaLogo from '@/components/app/NexaLogo';
 import ChatMessageBubble from '@/components/app/ChatMessageBubble';
+import SunburstIcon from '@/components/app/SunburstIcon';
 import { useChat } from '@/state/ChatProvider';
 
 export default function ChatScreen() {
@@ -108,11 +108,7 @@ export default function ChatScreen() {
     return (
       <View style={styles.orbLoaderRow}>
         <Animated.View style={{ opacity: pulseAnim, transform: [{ scale: pulseAnim }] }}>
-          <Image
-            source={require('../../assets/logo.jpg')}
-            style={styles.loaderLogo}
-            resizeMode="contain"
-          />
+          <SunburstIcon size={24} />
         </Animated.View>
         <Text style={styles.thinkingText}>Thinking{dots}</Text>
       </View>
@@ -123,11 +119,7 @@ export default function ChatScreen() {
     return (
       <View style={styles.loadingContainer}>
         <Animated.View>
-          <Image
-            source={require('../../assets/logo.jpg')}
-            style={styles.loadingLogo}
-            resizeMode="contain"
-          />
+          <SunburstIcon size={70} />
         </Animated.View>
         <Text style={styles.loadingText}>Loading conversation...</Text>
       </View>
@@ -182,11 +174,7 @@ export default function ChatScreen() {
         {/* Welcome Hero Section */}
         {chat.messages.length === 0 && (
           <View style={styles.hero}>
-            <Image
-              source={require('../../assets/logo.jpg')}
-              style={styles.heroLogo}
-              resizeMode="contain"
-            />
+            <SunburstIcon size={64} />
             <Text style={styles.chatTitle}>How can I help you this evening?</Text>
           </View>
         )}
