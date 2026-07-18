@@ -1,303 +1,239 @@
-﻿import React, { useRef, useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableOpacity,
-  ScrollView,
   Animated,
   Easing,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation } from 'expo-router';
-import { DrawerActions } from '@react-navigation/native';
+import Svg, { Circle, Line, Path } from 'react-native-svg';
 import { Feather } from '@expo/vector-icons';
-import ChatInput from '@/components/app/ChatInput';
-import NexaLogo from '@/components/app/NexaLogo';
-import SunburstIcon from '@/components/app/SunburstIcon';
-import ChatMessageBubble from '@/components/app/ChatMessageBubble';
-import { useChat } from '@/state/ChatProvider';
 
-function getGreeting() {
-  const hour = new Date().getHours();
-  if (hour < 5) return 'How can I help you tonight?';
-  if (hour < 12) return 'How can I help you this morning?';
-  if (hour < 17) return 'How can I help you this afternoon?';
-  return 'How can I help you this evening?';
-}
+const HAND_STROKE = '#151515';
+const ACCENT = '#ff6f61';
+const MUTED = '#8f8f8f';
+const FIELD_BG = '#f7f7f7';
+const CARD_BG = '#ffffff';
+const PAGE_BG = '#fbfbfb';
+const GOOGLE = '#ecf2ff';
+const APPLE = '#111111';
 
-export default function IndexScreen() {
-  const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
-  const scrollRef = useRef<ScrollView>(null);
-  const { chats, sendMessage, startNewChat } = useChat();
-  const [aiLoading, setAiLoading] = useState(false);
-  const [showWelcome, setShowWelcome] = useState(true);
-
-  const currentChat = chats.length > 0 ? chats[0] : null;
+function AnimatedHandNetwork() {
+  const float = useRef(new Animated.Value(0)).current;
+  const dotA = useRef(new Animated.Value(0)).current;
+  const dotB = useRef(new Animated.Value(0)).current;
+  const dotC = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (currentChat && currentChat.messages.length > 0) {
-      setShowWelcome(false);
-    } else {
-      setShowWelcome(true);
-    }
-  }, [currentChat]);
-
-  const handleSend = async (text: string) => {
-    try {
-      setShowWelcome(false);
-      setAiLoading(true);
-      await sendMessage({ text });
-      requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
-    } catch (error) {
-      console.error('Send message error:', error);
-    } finally {
-      setAiLoading(false);
-    }
-  };
-
-  const BlurryLoader = () => {
-    const pulseAnim = useRef(new Animated.Value(0.5)).current;
-    const dotsAnim = useRef(new Animated.Value(0)).current;
-    const [dots, setDots] = useState('');
-
-    useEffect(() => {
-      const loop = Animated.loop(
+    const loops = [
+      Animated.loop(
         Animated.sequence([
-          Animated.timing(pulseAnim, { toValue: 1, duration: 800, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-          Animated.timing(pulseAnim, { toValue: 0.5, duration: 800, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+          Animated.timing(float, { toValue: 1, duration: 2600, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+          Animated.timing(float, { toValue: 0, duration: 2600, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
         ])
-      );
-      loop.start();
+      ),
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(dotA, { toValue: 1, duration: 1900, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+          Animated.timing(dotA, { toValue: 0, duration: 1900, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        ])
+      ),
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(dotB, { toValue: 1, duration: 2300, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+          Animated.timing(dotB, { toValue: 0, duration: 2300, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        ])
+      ),
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(dotC, { toValue: 1, duration: 2100, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+          Animated.timing(dotC, { toValue: 0, duration: 2100, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        ])
+      ),
+    ];
 
-      const dotsLoop = Animated.loop(
-        Animated.timing(dotsAnim, { toValue: 3, duration: 1200, easing: Easing.linear, useNativeDriver: false })
-      );
-      dotsLoop.start();
+    loops.forEach(loop => loop.start());
+    return () => loops.forEach(loop => loop.stop());
+  }, [dotA, dotB, dotC, float]);
 
-      const listenerId = dotsAnim.addListener(({ value }) => {
-        setDots('.'.repeat(Math.floor(value % 4)));
-      });
+  const handY = float.interpolate({ inputRange: [0, 1], outputRange: [0, -8] });
+  const handRotate = float.interpolate({ inputRange: [0, 1], outputRange: ['-1.5deg', '1.5deg'] });
 
-      return () => {
-        loop.stop();
-        dotsLoop.stop();
-        dotsAnim.removeListener(listenerId);
-      };
-    }, [pulseAnim, dotsAnim]);
-
-    return (
-      <View style={styles.orbLoaderRow}>
-        <Animated.View style={{ opacity: pulseAnim, transform: [{ scale: pulseAnim }] }}>
-          <SunburstIcon size={24} />
-        </Animated.View>
-        <Text style={styles.thinkingText}>Thinking{dots}</Text>
-      </View>
-    );
-  };
+  const points = useMemo(
+    () => [
+      { x: 62, y: 80, size: 9, anim: dotA },
+      { x: 112, y: 42, size: 7, anim: dotB },
+      { x: 176, y: 68, size: 10, anim: dotC },
+      { x: 224, y: 38, size: 6, anim: dotA },
+      { x: 258, y: 95, size: 8, anim: dotB },
+      { x: 201, y: 128, size: 7, anim: dotC },
+    ],
+    [dotA, dotB, dotC]
+  );
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={styles.container}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-    >
-      {/* Header */}
-      <View style={[styles.header, { paddingTop: Math.max(insets.top, 12) }]}>
-        <TouchableOpacity
-          style={styles.menuBtn}
-          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-          activeOpacity={0.65}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Feather name="menu" size={22} color="#666666" />
-        </TouchableOpacity>
+    <View style={styles.illustrationWrap}>
+      <Svg width="100%" height="100%" viewBox="0 0 320 260" style={StyleSheet.absoluteFill}>
+        <Line x1="62" y1="80" x2="112" y2="42" stroke="#e9a099" strokeWidth="2" strokeDasharray="5 6" />
+        <Line x1="112" y1="42" x2="176" y2="68" stroke="#e9a099" strokeWidth="2" strokeDasharray="5 6" />
+        <Line x1="176" y1="68" x2="224" y2="38" stroke="#e9a099" strokeWidth="2" strokeDasharray="5 6" />
+        <Line x1="176" y1="68" x2="258" y2="95" stroke="#e9a099" strokeWidth="2" strokeDasharray="5 6" />
+        <Line x1="258" y1="95" x2="201" y2="128" stroke="#e9a099" strokeWidth="2" strokeDasharray="5 6" />
+      </Svg>
 
-        <View style={styles.headerCenter}>
-          <SunburstIcon size={24} />
-          <Text style={styles.headerTitle}>NEXA AI 4.5</Text>
-        </View>
+      {points.map((point, index) => {
+        const translateY = point.anim.interpolate({ inputRange: [0, 1], outputRange: [0, index % 2 === 0 ? -10 : 9] });
+        const translateX = point.anim.interpolate({ inputRange: [0, 1], outputRange: [0, index % 2 === 0 ? 7 : -6] });
+        const scale = point.anim.interpolate({ inputRange: [0, 1], outputRange: [0.88, 1.16] });
+        return (
+          <Animated.View
+            key={`${point.x}-${point.y}`}
+            style={[
+              styles.dot,
+              {
+                width: point.size,
+                height: point.size,
+                borderRadius: point.size / 2,
+                left: point.x,
+                top: point.y,
+                transform: [{ translateX }, { translateY }, { scale }],
+              },
+            ]}
+          />
+        );
+      })}
 
-        <TouchableOpacity
-          style={styles.notificationBtn}
-          activeOpacity={0.7}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Feather name="bell" size={20} color="#666666" />
-        </TouchableOpacity>
-      </View>
+      <Animated.View style={[styles.handLayer, { transform: [{ translateY: handY }, { rotate: handRotate }] }]}>
+        <Svg width="286" height="206" viewBox="0 0 286 206">
+          <Path
+            d="M67 154c13 8 31 16 55 18 28 2 53-9 73-27l48-44c8-8 20-7 27 1 7 8 6 20-2 27l-61 54c-26 22-57 27-92 21-36-6-65-21-91-45-7-7-8-18-1-26 7-7 18-8 26-1l18 22Z"
+            fill="none"
+            stroke={HAND_STROKE}
+            strokeWidth="5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <Path
+            d="M123 169 79 91c-4-8-1-18 7-22 8-4 18-1 23 7l35 62"
+            fill="none"
+            stroke={HAND_STROKE}
+            strokeWidth="5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <Path d="M146 139 111 69c-4-8 0-18 8-22 8-4 18 0 22 8l32 65" fill="none" stroke={HAND_STROKE} strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+          <Path d="M174 121 150 60c-3-9 1-18 10-21 9-3 18 1 21 10l22 58" fill="none" stroke={HAND_STROKE} strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+          <Path d="M203 107 192 62c-2-9 3-18 12-20 9-2 18 3 20 12l10 39" fill="none" stroke={HAND_STROKE} strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+          <Circle cx="78" cy="90" r="5" fill={ACCENT} />
+          <Circle cx="113" cy="69" r="5" fill={ACCENT} />
+          <Circle cx="151" cy="60" r="5" fill={ACCENT} />
+          <Circle cx="193" cy="63" r="5" fill={ACCENT} />
+        </Svg>
+      </Animated.View>
+    </View>
+  );
+}
 
-      {showWelcome && !currentChat ? (
-        <ScrollView
-          ref={scrollRef}
-          style={styles.messages}
-          contentContainerStyle={styles.welcomeContent}
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={styles.welcomeContainer}>
-            <SunburstIcon size={72} />
-            <Text style={styles.welcomeHeadline}>
-              {getGreeting()}
-            </Text>
+type Mode = 'signin' | 'signup';
+
+export default function AuthScreen() {
+  const [mode, setMode] = useState<Mode>('signin');
+  const isSignUp = mode === 'signup';
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.page}>
+        <View style={styles.card}>
+          <View style={styles.brandRow}>
+            <View style={styles.logoBadge}><Text style={styles.logoText}>N</Text></View>
+            <Text style={styles.brandText}>NEXA AI</Text>
           </View>
-        </ScrollView>
-      ) : (
-        <ScrollView
-          ref={scrollRef}
-          style={styles.messages}
-          contentContainerStyle={styles.messagesContent}
-          showsVerticalScrollIndicator={false}
-        >
-          {currentChat && currentChat.messages.length === 0 ? (
-            <View style={styles.emptyState}>
-              <SunburstIcon size={48} />
-              <Text style={styles.emptyTitle}>Start a conversation</Text>
-              <Text style={styles.emptyText}>Ask your first question below</Text>
-            </View>
-          ) : null}
 
-          {currentChat?.messages && currentChat.messages.map(message => (
-            <ChatMessageBubble key={message.id} message={message} />
-          ))}
+          <AnimatedHandNetwork />
 
-          {aiLoading && (
-            <View style={styles.aiLoadingRow}>
-              <View style={styles.aiLoadingBubble}>
-                <BlurryLoader />
+          <View style={styles.copyBlock}>
+            <Text style={styles.title}>{isSignUp ? 'Create Account' : 'Sign In'}</Text>
+            <Text style={styles.subtitle}>{isSignUp ? 'Start your AI journey with NEXA today.' : 'Welcome back, you have been missed.'}</Text>
+          </View>
+
+          <View style={styles.form}>
+            {isSignUp && (
+              <View style={styles.inputShell}>
+                <Feather name="user" size={18} color={MUTED} />
+                <TextInput style={styles.input} placeholder="Full name" placeholderTextColor={MUTED} />
               </View>
+            )}
+            <View style={styles.inputShell}>
+              <Feather name="mail" size={18} color={MUTED} />
+              <TextInput style={styles.input} placeholder="Email address" placeholderTextColor={MUTED} autoCapitalize="none" keyboardType="email-address" />
             </View>
-          )}
-        </ScrollView>
-      )}
+            <View style={styles.inputShell}>
+              <Feather name="lock" size={18} color={MUTED} />
+              <TextInput style={styles.input} placeholder="Password" placeholderTextColor={MUTED} secureTextEntry />
+              <Feather name="eye-off" size={18} color={MUTED} />
+            </View>
+            {!isSignUp && <Text style={styles.forgot}>Forgot Password?</Text>}
 
-      <View style={styles.inputWrap}>
-        <ChatInput onSend={handleSend} disabled={aiLoading} />
-      </View>
-    </KeyboardAvoidingView>
+            <Pressable style={styles.primaryButton}>
+              <Text style={styles.primaryText}>{isSignUp ? 'Sign Up' : 'Sign In'}</Text>
+            </Pressable>
+
+            <View style={styles.dividerRow}><View style={styles.divider} /><Text style={styles.dividerText}>or</Text><View style={styles.divider} /></View>
+
+            <View style={styles.socialRow}>
+              <Pressable style={[styles.socialButton, styles.googleButton]}><Text style={styles.googleG}>G</Text></Pressable>
+              <Pressable style={[styles.socialButton, styles.appleButton]}><Feather name="smartphone" size={20} color="#fff" /></Pressable>
+            </View>
+          </View>
+
+          <Pressable style={styles.switchRow} onPress={() => setMode(isSignUp ? 'signin' : 'signup')}>
+            <Text style={styles.switchMuted}>{isSignUp ? 'Already have an account?' : "Don't have an account?"}</Text>
+            <Text style={styles.switchAccent}> {isSignUp ? 'Sign In' : 'Sign Up'}</Text>
+          </Pressable>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F9F6F2',
+  safeArea: { flex: 1, backgroundColor: PAGE_BG },
+  page: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 22 },
+  card: {
+    width: '100%', maxWidth: 390, minHeight: 770, backgroundColor: CARD_BG, borderRadius: 42,
+    paddingHorizontal: 28, paddingTop: 28, paddingBottom: 24, shadowColor: '#000', shadowOpacity: 0.12,
+    shadowRadius: 28, shadowOffset: { width: 0, height: 18 }, elevation: 10,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    backgroundColor: '#F9F6F2',
-    borderBottomWidth: 1,
-    borderBottomColor: '#EDE7DD',
-  },
-  menuBtn: {
-    padding: 8,
-    borderRadius: 10,
-    backgroundColor: 'transparent',
-  },
-  headerCenter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  headerLogo: {
-    width: 28,
-    height: 28,
-  },
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#1D1D1D',
-    letterSpacing: -0.5,
-  },
-  notificationBtn: {
-    padding: 8,
-    borderRadius: 10,
-    backgroundColor: 'transparent',
-  },
-  messages: {
-    flex: 1,
-  },
-  welcomeContent: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 28,
-  },
-  welcomeContainer: {
-    alignItems: 'center',
-  },
-  welcomeHeadline: {
-    fontSize: 28,
-    fontWeight: '500',
-    fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
-    color: '#1D1D1D',
-    textAlign: 'center',
-    letterSpacing: -0.3,
-    marginTop: 20,
-    marginBottom: 12,
-    lineHeight: 36,
-  },
-  messagesContent: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 18,
-  },
-  emptyState: {
-    alignItems: 'center',
-    paddingVertical: 40,
-  },
-  emptyLogo: {
-    width: 60,
-    height: 60,
-    marginBottom: 16,
-  },
-  emptyTitle: {
-    color: '#1D1D1D',
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 4,
-  },
-  emptyText: {
-    color: 'rgba(0,0,0,0.55)',
-    fontSize: 14,
-    textAlign: 'center',
-  },
-  inputWrap: {
-    paddingBottom: 4,
-  },
-  loaderLogo: {
-    width: 24,
-    height: 24,
-  },
-  orbLoaderRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  thinkingText: {
-    color: 'rgba(0,0,0,0.55)',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  aiLoadingRow: {
-    alignItems: 'flex-start',
-    marginVertical: 8,
-    width: '100%',
-  },
-  aiLoadingBubble: {
-    maxWidth: '86%',
-    borderRadius: 20,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E8E8E8',
-    borderBottomLeftRadius: 6,
-  },
+  brandRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  logoBadge: { width: 34, height: 34, borderRadius: 12, backgroundColor: HAND_STROKE, alignItems: 'center', justifyContent: 'center' },
+  logoText: { color: '#fff', fontSize: 18, fontWeight: '800' },
+  brandText: { color: HAND_STROKE, fontSize: 16, fontWeight: '800', letterSpacing: 1.5 },
+  illustrationWrap: { height: 248, marginTop: 20, marginHorizontal: -8 },
+  handLayer: { position: 'absolute', left: 10, right: 0, bottom: 4, alignItems: 'center' },
+  dot: { position: 'absolute', backgroundColor: ACCENT, shadowColor: ACCENT, shadowOpacity: 0.3, shadowRadius: 8, elevation: 4 },
+  copyBlock: { alignItems: 'center', marginTop: 4 },
+  title: { fontSize: 31, lineHeight: 37, fontWeight: '800', color: HAND_STROKE, letterSpacing: -0.7 },
+  subtitle: { marginTop: 8, color: MUTED, fontSize: 15, lineHeight: 21, textAlign: 'center' },
+  form: { marginTop: 26 },
+  inputShell: { height: 58, borderRadius: 18, backgroundColor: FIELD_BG, paddingHorizontal: 18, marginBottom: 14, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  input: { flex: 1, color: HAND_STROKE, fontSize: 15, fontWeight: '500' },
+  forgot: { color: ACCENT, fontSize: 14, fontWeight: '700', alignSelf: 'flex-end', marginBottom: 18, marginTop: -2 },
+  primaryButton: { height: 58, borderRadius: 18, backgroundColor: ACCENT, alignItems: 'center', justifyContent: 'center', shadowColor: ACCENT, shadowOpacity: 0.32, shadowRadius: 16, shadowOffset: { width: 0, height: 10 }, elevation: 5 },
+  primaryText: { color: '#fff', fontSize: 17, fontWeight: '800' },
+  dividerRow: { flexDirection: 'row', alignItems: 'center', gap: 14, marginVertical: 24 },
+  divider: { flex: 1, height: 1, backgroundColor: '#ededed' },
+  dividerText: { color: MUTED, fontSize: 14, fontWeight: '600' },
+  socialRow: { flexDirection: 'row', justifyContent: 'center', gap: 18 },
+  socialButton: { width: 64, height: 52, borderRadius: 17, alignItems: 'center', justifyContent: 'center' },
+  googleButton: { backgroundColor: GOOGLE },
+  appleButton: { backgroundColor: APPLE },
+  googleG: { color: '#4285f4', fontSize: 22, fontWeight: '900' },
+  switchRow: { marginTop: 'auto', paddingTop: 22, alignSelf: 'center', flexDirection: 'row' },
+  switchMuted: { color: MUTED, fontSize: 14, fontWeight: '600' },
+  switchAccent: { color: ACCENT, fontSize: 14, fontWeight: '800' },
 });
